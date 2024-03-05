@@ -1,0 +1,17 @@
+mysql:
+  user: root
+  password: 81512851
+  ip: 127.0.0.1
+  port: 3306
+  dbName: demo
+  charset: utf8mb4&parseTime=True&loc=Local
+redis:
+  poolSize: 16
+  minIdleConn: 10
+  DB: 0
+  password: ""
+  address: 127.0.0.1:6379
+token:
+  secretKey: "wjzsaaaa"
+  Issuer: "www.wj.com"
+  ExpiresTime: 604800

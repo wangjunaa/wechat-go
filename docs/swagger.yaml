@@ -1,0 +1,728 @@
+definitions:
+  Model.GroupBasic:
+    properties:
+      createdAt:
+        type: string
+      icon:
+        items:
+          type: integer
+        type: array
+      id:
+        type: integer
+      members:
+        items:
+          $ref: '#/definitions/Model.UserBasic'
+        type: array
+      name:
+        type: string
+      ownerId:
+        type: string
+      type:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  Model.ShowUser:
+    properties:
+      birthday:
+        type: string
+      email:
+        type: string
+      icon:
+        items:
+          type: integer
+        type: array
+      id:
+        type: string
+      loginTime:
+        type: string
+      phone:
+        type: string
+      userName:
+        type: string
+    type: object
+  Model.UserBasic:
+    properties:
+      birthday:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      groups:
+        items:
+          $ref: '#/definitions/Model.GroupBasic'
+        type: array
+      homeAddress:
+        type: string
+      icon:
+        items:
+          type: integer
+        type: array
+      id:
+        type: string
+      ipAddress:
+        type: string
+      loginTime:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      updatedAt:
+        type: string
+      userName:
+        type: string
+    type: object
+  server.friendListResp:
+    properties:
+      friends:
+        items:
+          $ref: '#/definitions/Model.ShowUser'
+        type: array
+    type: object
+  server.membersJson:
+    properties:
+      members:
+        items:
+          $ref: '#/definitions/Model.UserBasic'
+        type: array
+    type: object
+info:
+  contact: {}
+paths:
+  /friend/agree:
+    post:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 被同意的用户id
+        in: query
+        name: id2
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 同意好友请求
+      tags:
+      - 好友
+  /friend/delete:
+    post:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 被删除的用户id
+        in: query
+        name: deletedId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 删除好友
+      tags:
+      - 好友
+  /friend/getList:
+    get:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/server.friendListResp'
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 获取好友列表
+      tags:
+      - 好友
+  /friend/request:
+    post:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 被请求的用户id
+        in: query
+        name: id2
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 发送好友请求
+      tags:
+      - 好友
+  /group/create:
+    post:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 初始群员id
+        in: body
+        name: members
+        required: true
+        schema:
+          $ref: '#/definitions/server.membersJson'
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/Model.GroupBasic'
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 创建群组
+      tags:
+      - 群
+  /group/delete:
+    post:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 群id
+        in: query
+        name: groupId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 删除群聊
+      tags:
+      - 群
+  /group/enterAgree:
+    post:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 群id
+        in: query
+        name: groupId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 获取群信息
+      tags:
+      - 群
+  /group/enterReq:
+    post:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 群id
+        in: query
+        name: groupId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 发送加群申请
+      tags:
+      - 群
+  /group/getGroup:
+    get:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 群id
+        in: query
+        name: groupId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/Model.GroupBasic'
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 获取群信息
+      tags:
+      - 群
+  /group/getMembers:
+    get:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 群id
+        in: query
+        name: groupId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            items:
+              $ref: '#/definitions/Model.ShowUser'
+            type: array
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 获取群员信息
+      tags:
+      - 群
+  /group/inviteMember:
+    post:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 群id
+        in: query
+        name: groupId
+        required: true
+        type: string
+      - description: 被邀请用户id
+        in: body
+        name: invitedMembers
+        required: true
+        schema:
+          $ref: '#/definitions/server.membersJson'
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 邀请入群
+      tags:
+      - 群
+  /group/removeMember:
+    post:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 群id
+        in: query
+        name: groupId
+        required: true
+        type: string
+      - description: 被删除用户id
+        in: query
+        name: deletedId
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 删除群员
+      tags:
+      - 群
+  /message/getPush:
+    get:
+      parameters:
+      - description: 用户令牌
+        in: query
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "403":
+          description: 拒绝访问
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 创建通知通道
+      tags:
+      - 消息操作
+  /user/create:
+    post:
+      parameters:
+      - description: 用户id
+        in: header
+        name: id
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      - description: 重复密码
+        in: header
+        name: password2
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 添加成功
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+      summary: 创建用户
+      tags:
+      - 用户操作
+  /user/delete:
+    post:
+      parameters:
+      - description: 用户令牌
+        in: query
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: query
+        name: id
+        required: true
+        type: string
+      - description: 密码
+        in: query
+        name: password
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+      summary: 删除用户
+      tags:
+      - 用户操作
+  /user/find/{id}:
+    get:
+      parameters:
+      - description: 用户令牌
+        in: query
+        name: x-token
+        required: true
+        type: string
+      - description: 用户id
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            $ref: '#/definitions/Model.ShowUser'
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+      summary: 获取用户
+      tags:
+      - 用户操作
+  /user/login:
+    post:
+      parameters:
+      - description: 用户id
+        in: header
+        name: id
+        required: true
+        type: string
+      - description: 密码
+        in: header
+        name: password
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+      summary: 用户登录
+      tags:
+      - 用户操作
+  /user/update:
+    post:
+      parameters:
+      - description: 用户令牌
+        in: header
+        name: x-token
+        required: true
+        type: string
+      - description: 用户json信息
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/Model.UserBasic'
+      responses:
+        "200":
+          description: 成功
+          schema:
+            type: string
+        "412":
+          description: 先决条件错误
+          schema:
+            type: string
+        "500":
+          description: 内部错误
+          schema:
+            type: string
+      summary: 更新用户
+      tags:
+      - 用户操作
+swagger: "2.0"
