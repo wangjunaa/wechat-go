@@ -25,11 +25,11 @@ var upgrade = websocket.Upgrader{
 
 func WsHandler(id string, ctx *gin.Context) {
 	defer func() {
+		closeClient(id)
 		err := recover()
 		if err != nil {
 			log.Println("handle.handle_message:", err)
 		}
-		closeClient(id)
 	}()
 	//创建节点
 	conn, err := upgrade.Upgrade(ctx.Writer, ctx.Request, nil)
@@ -47,6 +47,7 @@ func WsHandler(id string, ctx *gin.Context) {
 	for {
 		select {
 		case msg := <-c.DataChan:
+			//log.Println("msg:", msg)
 			err := conn.WriteJSON(msg)
 			if err != nil {
 				panic(err)
@@ -68,6 +69,7 @@ func WsHandler(id string, ctx *gin.Context) {
 func addClient(id string, conn *websocket.Conn) *Model.ClientNode {
 	mux.Lock()
 	defer mux.Unlock()
+	log.Println("addClient:", id)
 	c := Model.ClientNode{
 		Conn:     conn,
 		DataChan: make(chan *Model.Message),
@@ -98,14 +100,20 @@ func getClient(id string) *Model.ClientNode {
 
 // 接收消息进程
 func receiveMsgFromClient(conn *websocket.Conn) {
-	var msg *Model.Message
 	defer func() {
 		err := recover()
 		if err != nil {
+			_ = conn.Close()
 			log.Println("handle.receiveMsgFromClient:", err)
 		}
 	}()
+	//获取连接成功后第一次消息
+	_, _, err := conn.ReadMessage()
+	if err != nil {
+		panic(err)
+	}
 	for {
+		msg := &Model.Message{}
 		err := conn.ReadJSON(&msg)
 		if err != nil {
 			panic(err)
@@ -124,6 +132,9 @@ func receiveMsgFromClient(conn *websocket.Conn) {
 				panic(err)
 			}
 			for _, member := range group.Members {
+				if member.ID == msg.SenderId {
+					continue
+				}
 				msg.ReceiverId = member.ID
 				err := SendMsg(msg)
 				if err != nil {
@@ -145,8 +156,9 @@ func receiveMsgFromRdb(id string, m chan *Model.Message) {
 	if err != nil {
 		panic(err)
 	}
-	var msg *Model.Message
 	for _, message := range Messages {
+		msg := &Model.Message{}
+		//log.Println("formRdb:", message)
 		err := json.Unmarshal([]byte(message), msg)
 		if err != nil {
 			panic(err)
@@ -157,7 +169,6 @@ func receiveMsgFromRdb(id string, m chan *Model.Message) {
 			panic(err)
 		}
 	}
-
 }
 
 // sendMsgToRdb 将信息加入缓存
@@ -167,6 +178,7 @@ func sendMsgToRdb(m *Model.Message) error {
 
 		return err
 	}
+	log.Println("sendMsgToRdb:", bytes)
 	err = config.Rdb.RPush(config.BgCtx, config.MsgPre+m.ReceiverId, bytes).Err()
 	return err
 }

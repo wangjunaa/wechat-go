@@ -49,5 +49,9 @@ func Router() *gin.Engine {
 		group.POST("/removeMember", server.RemoveGroupMember)
 		group.POST("/inviteMember", server.InviteToGroup)
 	}
+	tool := r.Group("/tool")
+	{
+		tool.POST("/getMessageJson", server.GetMessageJson)
+	}
 	return r
 }

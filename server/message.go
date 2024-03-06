@@ -18,7 +18,7 @@ import (
 // @Router /message/getPush [get]
 func GetPushMessage(c *gin.Context) {
 	id := c.Query("id")
-	ts := c.Query("x-Token")
+	ts := c.Query("x-token")
 	ok := token.CheckToken(ts, id)
 	if !ok {
 		c.String(http.StatusForbidden, "拒绝访问")

@@ -757,6 +757,51 @@ const docTemplate = `{
                 }
             }
         },
+        "/tool/getMessageJson": {
+            "post": {
+                "tags": [
+                    "工具"
+                ],
+                "summary": "获取消息json格式",
+                "parameters": [
+                    {
+                        "description": "消息",
+                        "name": "message",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Model.Message"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "403": {
+                        "description": "拒绝访问",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "412": {
+                        "description": "先决条件错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/user/create": {
             "post": {
                 "tags": [
@@ -765,25 +810,13 @@ const docTemplate = `{
                 "summary": "创建用户",
                 "parameters": [
                     {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "密码",
-                        "name": "password",
-                        "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "重复密码",
-                        "name": "password2",
-                        "in": "header",
-                        "required": true
+                        "description": "用户json",
+                        "name": "json",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Model.RegisterJson"
+                        }
                     }
                 ],
                 "responses": {
@@ -1006,6 +1039,55 @@ const docTemplate = `{
                 }
             }
         },
+        "Model.Message": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "contentType": {
+                    "type": "integer"
+                },
+                "createdAt": {
+                    "type": "string"
+                },
+                "msgType": {
+                    "type": "integer"
+                },
+                "receiverId": {
+                    "type": "string"
+                },
+                "senderId": {
+                    "type": "string"
+                }
+            }
+        },
+        "Model.RegisterJson": {
+            "type": "object",
+            "properties": {
+                "icon": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "password1": {
+                    "type": "string"
+                },
+                "password2": {
+                    "type": "string"
+                },
+                "userName": {
+                    "type": "string"
+                }
+            }
+        },
         "Model.ShowUser": {
             "type": "object",
             "properties": {
@@ -1102,7 +1184,7 @@ const docTemplate = `{
                 "members": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/Model.UserBasic"
+                        "type": "string"
                     }
                 }
             }

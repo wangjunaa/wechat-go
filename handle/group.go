@@ -20,22 +20,29 @@ func CheckOwner(ownerId string, groupId string) error {
 	return nil
 
 }
-func CreateGroup(ownerId string, members []Model.UserBasic) (Model.GroupBasic, error) {
+func CreateGroup(ownerId string, membersId []string) (Model.GroupBasic, error) {
 	sGroupMux.Lock()
 	defer sGroupMux.UnLock()
 	name := ""
-	for i := 0; i < min(3, len(members)); i++ {
-		name += members[i].UserName
-		if i != 2 {
-			name += "、"
-		}
-	}
 	group := Model.GroupBasic{
 		Name:    "",
 		OwnerId: ownerId,
 		Icon:    nil,
-		Members: members,
 		Type:    0,
+	}
+	for i, id := range membersId {
+		user, err := GetUser(id)
+		if err != nil {
+			return group, err
+		}
+		//初始化群名
+		if i < 3 {
+			name += user.UserName
+			if i < 2 {
+				name += "、"
+			}
+		}
+		group.Members = append(group.Members, *user)
 	}
 	err := config.DB.Create(&group).Error
 	return group, err
@@ -84,15 +91,19 @@ func RemoveGroupMember(groupId string, deletedId string) error {
 	return nil
 }
 
-func InviteToGroup(groupId string, invitedMembers []Model.UserBasic) error {
+func InviteToGroup(groupId string, invitedMembers []string) error {
 	sGroupMux.Lock()
 	defer sGroupMux.UnLock()
 	group, err := GetGroupById(groupId)
 	if err != nil {
 		return err
 	}
-	for _, member := range invitedMembers {
-		group.Members = append(group.Members, member)
+	for _, id := range invitedMembers {
+		user, err := GetUser(id)
+		if err != nil {
+			return err
+		}
+		group.Members = append(group.Members, *user)
 	}
 	err = config.DB.Model(&group).Update("Members", group.Members).Error
 	return err

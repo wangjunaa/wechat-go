@@ -34,23 +34,15 @@ func FindUser(c *gin.Context) {
 	c.JSON(http.StatusOK, u.ToShowUser())
 }
 
-type RegisterJson struct {
-	ID        string
-	Password1 string
-	Password2 string
-	Icon      []byte
-	UserName  string
-}
-
 // CreateUser
 // @Summary 创建用户
 // @Tags 用户操作
-// @Param json body LoginJson true "用户json"
+// @Param json body Model.RegisterJson true "用户json"
 // @Success 200 {string} string "添加成功"
 // @Failure 412 {string} string "先决条件错误"
 // @Router /user/create [post]
 func CreateUser(c *gin.Context) {
-	var json RegisterJson
+	var json Model.RegisterJson
 	err := c.ShouldBindJSON(&json)
 	if err != nil {
 		c.String(http.StatusPreconditionFailed, err.Error())
@@ -61,7 +53,7 @@ func CreateUser(c *gin.Context) {
 		c.String(http.StatusPreconditionFailed, "两次密码不同")
 		return
 	}
-	err = handle.CreateUser(&json)
+	err = handle.CreateUser(json)
 	if err != nil {
 		c.String(http.StatusPreconditionFailed, err.Error())
 		return

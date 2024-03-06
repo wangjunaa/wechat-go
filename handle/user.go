@@ -3,7 +3,6 @@ package handle
 import (
 	"demo/config"
 	Model "demo/models"
-	"demo/server"
 	"demo/tools/encryption"
 	"demo/tools/token"
 	"encoding/json"
@@ -87,7 +86,7 @@ func addUserToDB(user Model.UserBasic) error {
 	}
 	return nil
 }
-func CreateUser(json *server.RegisterJson) error {
+func CreateUser(json Model.RegisterJson) error {
 	u, err := GetUser(json.ID)
 	if err != nil && u != nil {
 		return err

@@ -2,13 +2,12 @@ package server
 
 import (
 	"demo/handle"
-	Model "demo/models"
 	"demo/tools/token"
 	"github.com/gin-gonic/gin"
 )
 
 type membersJson struct {
-	Members []Model.UserBasic `json:"members"`
+	MembersId []string `json:"members"`
 }
 
 // CreateGroup
@@ -37,7 +36,7 @@ func CreateGroup(c *gin.Context) {
 		return
 	}
 
-	group, err := handle.CreateGroup(id, temp.Members)
+	group, err := handle.CreateGroup(id, temp.MembersId)
 	if err != nil {
 		c.String(500, err.Error())
 		return
@@ -156,7 +155,7 @@ func InviteToGroup(c *gin.Context) {
 		return
 	}
 
-	err = handle.InviteToGroup(gid, temp.Members)
+	err = handle.InviteToGroup(gid, temp.MembersId)
 	if err != nil {
 		c.String(500, err.Error())
 		return
