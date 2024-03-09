@@ -1,4 +1,4 @@
-package Model
+package models
 
 import (
 	"github.com/gorilla/websocket"
@@ -22,7 +22,7 @@ type Message struct {
 	CreatedAt   *time.Time
 	SenderId    string
 	ReceiverId  string
-	Content     []byte
+	Content     interface{}
 	ContentType int
 	MsgType     int
 }

@@ -25,22 +25,15 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
                         "description": "被同意的用户id",
-                        "name": "id2",
-                        "in": "query",
+                        "name": "agreedId",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -48,25 +41,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -82,22 +75,15 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "被删除的用户id",
                         "name": "deletedId",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -105,25 +91,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -139,15 +125,8 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
                         "required": true
                     }
                 ],
@@ -155,25 +134,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.friendListResp"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -189,22 +168,15 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
                         "description": "被请求的用户id",
-                        "name": "id2",
-                        "in": "query",
+                        "name": "requestedId",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -212,25 +184,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -246,50 +218,45 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
                         "required": true
                     },
                     {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "description": "初始群员id",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
+                        "description": "初始群员id,应包括群主",
                         "name": "members",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/server.membersJson"
-                        }
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/Model.GroupBasic"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -305,22 +272,15 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "群id",
                         "name": "groupId",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -328,25 +288,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -357,27 +317,27 @@ const docTemplate = `{
                 "tags": [
                     "群"
                 ],
-                "summary": "获取群信息",
+                "summary": "同意群申请",
                 "parameters": [
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "群id",
                         "name": "groupId",
-                        "in": "query",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "被同意id",
+                        "name": "agreedId",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -385,25 +345,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -419,22 +379,15 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "群id",
                         "name": "groupId",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -442,25 +395,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -476,22 +429,15 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "群id",
                         "name": "groupId",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -499,25 +445,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/Model.GroupBasic"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -533,22 +479,15 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "群id",
                         "name": "groupId",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -556,28 +495,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/Model.ShowUser"
-                            }
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -593,57 +529,52 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "群id",
                         "name": "groupId",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     },
                     {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "collectionFormat": "csv",
                         "description": "被邀请用户id",
                         "name": "invitedMembers",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/server.membersJson"
-                        }
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -659,29 +590,15 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "群id",
-                        "name": "groupId",
-                        "in": "query",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "被删除用户id",
                         "name": "deletedId",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -689,25 +606,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -723,15 +640,8 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
+                        "name": "Authenticate",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -739,19 +649,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "401": {
+                        "description": "验证失败",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -770,7 +686,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/Model.Message"
+                            "$ref": "#/definitions/models.Message"
                         }
                     }
                 ],
@@ -778,25 +694,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "403": {
-                        "description": "拒绝访问",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "401": {
+                        "description": "验证失败",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -810,26 +726,50 @@ const docTemplate = `{
                 "summary": "创建用户",
                 "parameters": [
                     {
-                        "description": "用户json",
-                        "name": "json",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/Model.RegisterJson"
-                        }
+                        "type": "string",
+                        "description": "用户手机",
+                        "name": "phone",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "密码",
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "用户名",
+                        "name": "userName",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "添加成功",
+                        "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "401": {
+                        "description": "验证失败",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -845,22 +785,15 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "query",
+                        "name": "Authenticate",
+                        "in": "header",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "密码",
                         "name": "password",
-                        "in": "query",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -868,19 +801,31 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "401": {
+                        "description": "验证失败",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
             }
         },
-        "/user/find/{id}": {
+        "/user/find": {
             "get": {
                 "tags": [
                     "用户操作"
@@ -890,15 +835,15 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
-                        "in": "query",
+                        "name": "Authenticate",
+                        "in": "header",
                         "required": true
                     },
                     {
                         "type": "string",
-                        "description": "用户id",
-                        "name": "id",
-                        "in": "path",
+                        "description": "被查询用户Id",
+                        "name": "queriedId",
+                        "in": "query",
                         "required": true
                     }
                 ],
@@ -906,13 +851,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/Model.ShowUser"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "401": {
+                        "description": "验证失败",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -929,14 +886,14 @@ const docTemplate = `{
                         "type": "string",
                         "description": "用户id",
                         "name": "id",
-                        "in": "header",
+                        "in": "formData",
                         "required": true
                     },
                     {
                         "type": "string",
                         "description": "密码",
                         "name": "password",
-                        "in": "header",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -944,13 +901,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "401": {
+                        "description": "验证失败",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -966,7 +935,7 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "用户令牌",
-                        "name": "x-token",
+                        "name": "Authenticate",
                         "in": "header",
                         "required": true
                     },
@@ -976,7 +945,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/Model.UserBasic"
+                            "$ref": "#/definitions/models.UserBasic"
                         }
                     }
                 ],
@@ -984,19 +953,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
-                    "412": {
-                        "description": "先决条件错误",
+                    "400": {
+                        "description": "参数有误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "401": {
+                        "description": "验证失败",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/server.RespJson"
                         }
                     }
                 }
@@ -1004,7 +979,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "Model.GroupBasic": {
+        "models.GroupBasic": {
             "type": "object",
             "properties": {
                 "createdAt": {
@@ -1022,7 +997,7 @@ const docTemplate = `{
                 "members": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/Model.UserBasic"
+                        "$ref": "#/definitions/models.UserBasic"
                     }
                 },
                 "name": {
@@ -1039,7 +1014,7 @@ const docTemplate = `{
                 }
             }
         },
-        "Model.Message": {
+        "models.Message": {
             "type": "object",
             "properties": {
                 "content": {
@@ -1065,59 +1040,7 @@ const docTemplate = `{
                 }
             }
         },
-        "Model.RegisterJson": {
-            "type": "object",
-            "properties": {
-                "icon": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "id": {
-                    "type": "string"
-                },
-                "password1": {
-                    "type": "string"
-                },
-                "password2": {
-                    "type": "string"
-                },
-                "userName": {
-                    "type": "string"
-                }
-            }
-        },
-        "Model.ShowUser": {
-            "type": "object",
-            "properties": {
-                "birthday": {
-                    "type": "string"
-                },
-                "email": {
-                    "type": "string"
-                },
-                "icon": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
-                "id": {
-                    "type": "string"
-                },
-                "loginTime": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                },
-                "userName": {
-                    "type": "string"
-                }
-            }
-        },
-        "Model.UserBasic": {
+        "models.UserBasic": {
             "type": "object",
             "properties": {
                 "birthday": {
@@ -1132,7 +1055,7 @@ const docTemplate = `{
                 "groups": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/Model.GroupBasic"
+                        "$ref": "#/definitions/models.GroupBasic"
                     }
                 },
                 "homeAddress": {
@@ -1167,26 +1090,17 @@ const docTemplate = `{
                 }
             }
         },
-        "server.friendListResp": {
+        "server.RespJson": {
             "type": "object",
             "properties": {
-                "friends": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Model.ShowUser"
-                    }
-                }
-            }
-        },
-        "server.membersJson": {
-            "type": "object",
-            "properties": {
-                "members": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
+                "code": {
+                    "type": "integer"
+                },
+                "count": {
+                    "type": "integer"
+                },
+                "data": {},
+                "msg": {}
             }
         }
     }

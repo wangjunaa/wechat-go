@@ -1,7 +1,7 @@
-package handle
+package handler
 
 import (
-	"demo/config"
+	"demo/dao"
 	Model "demo/models"
 	"errors"
 	"log"
@@ -10,7 +10,7 @@ import (
 func IsFriend(id1 string, id2 string) bool {
 	list, err := GetFriendList(id1)
 	if err != nil {
-		log.Println("handle.user.IsFriend", err)
+		log.Println("handler.user.IsFriend", err)
 		return false
 	}
 	for _, user := range list {
@@ -18,6 +18,7 @@ func IsFriend(id1 string, id2 string) bool {
 			return true
 		}
 	}
+
 	return false
 }
 func FriendReq(senderId string, receiveId string) error {
@@ -61,12 +62,12 @@ func AddFriend(id1 string, id2 string) error {
 		UserId1: id1,
 		UserId2: id2,
 	}
-	err := config.DB.Create(friendShip).Error
+	err := dao.DB.Create(friendShip).Error
 	return err
 }
 func GetFriendList(id string) ([]Model.ShowUser, error) {
 	var friendShips []Model.FriendShip
-	err := config.DB.Preload("User1").Preload("User2").Where("user_id1=? or user_id2 = ?", id, id).Find(&friendShips).Error
+	err := dao.DB.Preload("User1").Preload("User2").Where("user_id1=? or user_id2 = ?", id, id).Find(&friendShips).Error
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +85,7 @@ func DeleteFriend(id string, deletedId string) error {
 	sFriendMux.Lock()
 	defer sFriendMux.UnLock()
 	var friendship Model.FriendShip
-	if err := config.DB.
+	if err := dao.DB.
 		Where("user_id1 = ? AND user_id2 = ?", id, deletedId).
 		Or("user_id1 = ? AND user_id2 = ?", deletedId, id).
 		First(&friendship).Error; err != nil {
@@ -92,7 +93,7 @@ func DeleteFriend(id string, deletedId string) error {
 	}
 
 	// 删除好友关系记录
-	if err := config.DB.Delete(&friendship).Error; err != nil {
+	if err := dao.DB.Delete(&friendship).Error; err != nil {
 		return err
 	}
 	return nil

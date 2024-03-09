@@ -1,7 +1,7 @@
-package handle
+package handler
 
 import (
-	"demo/tools/redisLock"
+	"demo/utils/redisLock"
 	"time"
 )
 

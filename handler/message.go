@@ -1,7 +1,7 @@
-package handle
+package handler
 
 import (
-	"demo/config"
+	"demo/dao"
 	Model "demo/models"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
@@ -28,7 +28,7 @@ func WsHandler(id string, ctx *gin.Context) {
 		closeClient(id)
 		err := recover()
 		if err != nil {
-			log.Println("handle.handle_message:", err)
+			log.Println("handler.WsHandler:", err)
 		}
 	}()
 	//创建节点
@@ -54,11 +54,12 @@ func WsHandler(id string, ctx *gin.Context) {
 			}
 		//心跳
 		case <-pingTicker.C:
-			err := conn.SetReadDeadline(time.Now().Add(time.Second * 20))
+			log.Println("发送ticker")
+			err := conn.SetReadDeadline(time.Now().Add(time.Second * 10))
 			if err != nil {
 				panic(err)
 			}
-			err = conn.WriteMessage(websocket.PingMessage, []byte("ping"))
+			err = conn.WriteMessage(websocket.PingMessage, []byte("你好"))
 			if err != nil {
 				panic(err)
 			}
@@ -104,14 +105,14 @@ func receiveMsgFromClient(conn *websocket.Conn) {
 		err := recover()
 		if err != nil {
 			_ = conn.Close()
-			log.Println("handle.receiveMsgFromClient:", err)
+			log.Println("handler.receiveMsgFromClient:", err)
 		}
 	}()
 	//获取连接成功后第一次消息
-	_, _, err := conn.ReadMessage()
-	if err != nil {
-		panic(err)
-	}
+	//_, _, err := conn.ReadMessage()
+	//if err != nil {
+	//	panic(err)
+	//}
 	for {
 		msg := &Model.Message{}
 		err := conn.ReadJSON(&msg)
@@ -149,10 +150,10 @@ func receiveMsgFromClient(conn *websocket.Conn) {
 func receiveMsgFromRdb(id string, m chan *Model.Message) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("handle.handle_message.GetMsgFromRdb:", r)
+			log.Println("handler.handle_message.GetMsgFromRdb:", r)
 		}
 	}()
-	Messages, err := config.Rdb.LRange(config.BgCtx, config.MsgPre+id, 0, -1).Result()
+	Messages, err := dao.Rdb.LRange(dao.BgCtx, dao.MsgPre+id, 0, -1).Result()
 	if err != nil {
 		panic(err)
 	}
@@ -164,7 +165,7 @@ func receiveMsgFromRdb(id string, m chan *Model.Message) {
 			panic(err)
 		}
 		m <- msg
-		err = config.Rdb.LPop(config.BgCtx, config.MsgPre+id).Err()
+		err = dao.Rdb.LPop(dao.BgCtx, dao.MsgPre+id).Err()
 		if err != nil {
 			panic(err)
 		}
@@ -179,7 +180,7 @@ func sendMsgToRdb(m *Model.Message) error {
 		return err
 	}
 	log.Println("sendMsgToRdb:", bytes)
-	err = config.Rdb.RPush(config.BgCtx, config.MsgPre+m.ReceiverId, bytes).Err()
+	err = dao.Rdb.RPush(dao.BgCtx, dao.MsgPre+m.ReceiverId, bytes).Err()
 	return err
 }
 
@@ -187,7 +188,7 @@ func sendMsgToRdb(m *Model.Message) error {
 func SendMsg(m *Model.Message) error {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("handle.handle_message.SendMsg:", r)
+			log.Println("handler.handle_message.SendMsg:", r)
 		}
 	}()
 	client := getClient(m.ReceiverId)

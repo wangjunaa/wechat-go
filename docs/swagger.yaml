@@ -1,5 +1,5 @@
 definitions:
-  Model.GroupBasic:
+  models.GroupBasic:
     properties:
       createdAt:
         type: string
@@ -11,7 +11,7 @@ definitions:
         type: integer
       members:
         items:
-          $ref: '#/definitions/Model.UserBasic'
+          $ref: '#/definitions/models.UserBasic'
         type: array
       name:
         type: string
@@ -22,7 +22,7 @@ definitions:
       updatedAt:
         type: string
     type: object
-  Model.Message:
+  models.Message:
     properties:
       content:
         items:
@@ -39,41 +39,7 @@ definitions:
       senderId:
         type: string
     type: object
-  Model.RegisterJson:
-    properties:
-      icon:
-        items:
-          type: integer
-        type: array
-      id:
-        type: string
-      password1:
-        type: string
-      password2:
-        type: string
-      userName:
-        type: string
-    type: object
-  Model.ShowUser:
-    properties:
-      birthday:
-        type: string
-      email:
-        type: string
-      icon:
-        items:
-          type: integer
-        type: array
-      id:
-        type: string
-      loginTime:
-        type: string
-      phone:
-        type: string
-      userName:
-        type: string
-    type: object
-  Model.UserBasic:
+  models.UserBasic:
     properties:
       birthday:
         type: string
@@ -83,7 +49,7 @@ definitions:
         type: string
       groups:
         items:
-          $ref: '#/definitions/Model.GroupBasic'
+          $ref: '#/definitions/models.GroupBasic'
         type: array
       homeAddress:
         type: string
@@ -106,19 +72,14 @@ definitions:
       userName:
         type: string
     type: object
-  server.friendListResp:
+  server.RespJson:
     properties:
-      friends:
-        items:
-          $ref: '#/definitions/Model.ShowUser'
-        type: array
-    type: object
-  server.membersJson:
-    properties:
-      members:
-        items:
-          type: string
-        type: array
+      code:
+        type: integer
+      count:
+        type: integer
+      data: {}
+      msg: {}
     type: object
 info:
   contact: {}
@@ -128,36 +89,31 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        name: Authenticate
         required: true
         type: string
       - description: 被同意的用户id
-        in: query
-        name: id2
+        in: formData
+        name: agreedId
         required: true
         type: string
       responses:
         "200":
           description: 成功
           schema:
-            type: string
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 同意好友请求
       tags:
       - 好友
@@ -166,16 +122,11 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        name: Authenticate
         required: true
         type: string
       - description: 被删除的用户id
-        in: query
+        in: formData
         name: deletedId
         required: true
         type: string
@@ -183,19 +134,19 @@ paths:
         "200":
           description: 成功
           schema:
-            type: string
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 删除好友
       tags:
       - 好友
@@ -204,31 +155,26 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        name: Authenticate
         required: true
         type: string
       responses:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/server.friendListResp'
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 获取好友列表
       tags:
       - 好友
@@ -237,36 +183,31 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        name: Authenticate
         required: true
         type: string
       - description: 被请求的用户id
-        in: query
-        name: id2
+        in: formData
+        name: requestedId
         required: true
         type: string
       responses:
         "200":
           description: 成功
           schema:
-            type: string
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 发送好友请求
       tags:
       - 好友
@@ -275,37 +216,34 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
+        name: Authenticate
         required: true
         type: string
-      - description: 用户id
-        in: query
-        name: id
-        required: true
-        type: string
-      - description: 初始群员id
-        in: body
+      - collectionFormat: csv
+        description: 初始群员id,应包括群主
+        in: formData
+        items:
+          type: string
         name: members
         required: true
-        schema:
-          $ref: '#/definitions/server.membersJson'
+        type: array
       responses:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/Model.GroupBasic'
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 创建群组
       tags:
       - 群
@@ -314,16 +252,11 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        name: Authenticate
         required: true
         type: string
       - description: 群id
-        in: query
+        in: formData
         name: groupId
         required: true
         type: string
@@ -331,19 +264,19 @@ paths:
         "200":
           description: 成功
           schema:
-            type: string
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 删除群聊
       tags:
       - 群
@@ -352,37 +285,37 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        name: Authenticate
         required: true
         type: string
       - description: 群id
-        in: query
+        in: formData
         name: groupId
+        required: true
+        type: string
+      - description: 被同意id
+        in: formData
+        name: agreedId
         required: true
         type: string
       responses:
         "200":
           description: 成功
           schema:
-            type: string
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
-      summary: 获取群信息
+            $ref: '#/definitions/server.RespJson'
+      summary: 同意群申请
       tags:
       - 群
   /group/enterReq:
@@ -390,16 +323,11 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        name: Authenticate
         required: true
         type: string
       - description: 群id
-        in: query
+        in: formData
         name: groupId
         required: true
         type: string
@@ -407,19 +335,19 @@ paths:
         "200":
           description: 成功
           schema:
-            type: string
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 发送加群申请
       tags:
       - 群
@@ -428,16 +356,11 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        name: Authenticate
         required: true
         type: string
       - description: 群id
-        in: query
+        in: formData
         name: groupId
         required: true
         type: string
@@ -445,19 +368,19 @@ paths:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/Model.GroupBasic'
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 获取群信息
       tags:
       - 群
@@ -466,16 +389,11 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        name: Authenticate
         required: true
         type: string
       - description: 群id
-        in: query
+        in: formData
         name: groupId
         required: true
         type: string
@@ -483,21 +401,19 @@ paths:
         "200":
           description: 成功
           schema:
-            items:
-              $ref: '#/definitions/Model.ShowUser'
-            type: array
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 获取群员信息
       tags:
       - 群
@@ -506,42 +422,39 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        name: Authenticate
         required: true
         type: string
       - description: 群id
-        in: query
+        in: formData
         name: groupId
         required: true
         type: string
-      - description: 被邀请用户id
-        in: body
+      - collectionFormat: csv
+        description: 被邀请用户id
+        in: formData
+        items:
+          type: string
         name: invitedMembers
         required: true
-        schema:
-          $ref: '#/definitions/server.membersJson'
+        type: array
       responses:
         "200":
           description: 成功
           schema:
-            type: string
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 邀请入群
       tags:
       - 群
@@ -550,21 +463,11 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
-        required: true
-        type: string
-      - description: 群id
-        in: query
-        name: groupId
+        name: Authenticate
         required: true
         type: string
       - description: 被删除用户id
-        in: query
+        in: formData
         name: deletedId
         required: true
         type: string
@@ -572,19 +475,19 @@ paths:
         "200":
           description: 成功
           schema:
-            type: string
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 删除群员
       tags:
       - 群
@@ -592,28 +495,27 @@ paths:
     get:
       parameters:
       - description: 用户令牌
-        in: query
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        in: header
+        name: Authenticate
         required: true
         type: string
       responses:
         "200":
           description: 成功
           schema:
-            type: string
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
+          schema:
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 创建通知通道
       tags:
       - 消息操作
@@ -625,45 +527,62 @@ paths:
         name: message
         required: true
         schema:
-          $ref: '#/definitions/Model.Message'
+          $ref: '#/definitions/models.Message'
       responses:
         "200":
           description: 成功
           schema:
-            type: string
-        "403":
-          description: 拒绝访问
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 获取消息json格式
       tags:
       - 工具
   /user/create:
     post:
       parameters:
-      - description: 用户json
-        in: body
-        name: json
+      - description: 用户手机
+        in: formData
+        name: phone
         required: true
-        schema:
-          $ref: '#/definitions/Model.RegisterJson'
+        type: string
+      - description: 密码
+        in: formData
+        name: password
+        required: true
+        type: string
+      - description: 用户名
+        in: formData
+        name: userName
+        required: true
+        type: string
       responses:
         "200":
-          description: 添加成功
+          description: 成功
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
+          schema:
+            $ref: '#/definitions/server.RespJson'
+        "500":
+          description: 内部错误
+          schema:
+            $ref: '#/definitions/server.RespJson'
       summary: 创建用户
       tags:
       - 用户操作
@@ -671,17 +590,12 @@ paths:
     post:
       parameters:
       - description: 用户令牌
-        in: query
-        name: x-token
-        required: true
-        type: string
-      - description: 用户id
-        in: query
-        name: id
+        in: header
+        name: Authenticate
         required: true
         type: string
       - description: 密码
-        in: query
+        in: formData
         name: password
         required: true
         type: string
@@ -689,36 +603,52 @@ paths:
         "200":
           description: 成功
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
+          schema:
+            $ref: '#/definitions/server.RespJson'
+        "500":
+          description: 内部错误
+          schema:
+            $ref: '#/definitions/server.RespJson'
       summary: 删除用户
       tags:
       - 用户操作
-  /user/find/{id}:
+  /user/find:
     get:
       parameters:
       - description: 用户令牌
-        in: query
-        name: x-token
+        in: header
+        name: Authenticate
         required: true
         type: string
-      - description: 用户id
-        in: path
-        name: id
+      - description: 被查询用户Id
+        in: query
+        name: queriedId
         required: true
         type: string
       responses:
         "200":
           description: 成功
           schema:
-            $ref: '#/definitions/Model.ShowUser'
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
+          schema:
+            $ref: '#/definitions/server.RespJson'
+        "500":
+          description: 内部错误
+          schema:
+            $ref: '#/definitions/server.RespJson'
       summary: 获取用户
       tags:
       - 用户操作
@@ -726,12 +656,12 @@ paths:
     post:
       parameters:
       - description: 用户id
-        in: header
+        in: formData
         name: id
         required: true
         type: string
       - description: 密码
-        in: header
+        in: formData
         name: password
         required: true
         type: string
@@ -739,11 +669,19 @@ paths:
         "200":
           description: 成功
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
+          schema:
+            $ref: '#/definitions/server.RespJson'
+        "500":
+          description: 内部错误
+          schema:
+            $ref: '#/definitions/server.RespJson'
       summary: 用户登录
       tags:
       - 用户操作
@@ -752,7 +690,7 @@ paths:
       parameters:
       - description: 用户令牌
         in: header
-        name: x-token
+        name: Authenticate
         required: true
         type: string
       - description: 用户json信息
@@ -760,20 +698,24 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/Model.UserBasic'
+          $ref: '#/definitions/models.UserBasic'
       responses:
         "200":
           description: 成功
           schema:
-            type: string
-        "412":
-          description: 先决条件错误
+            $ref: '#/definitions/server.RespJson'
+        "400":
+          description: 参数有误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
+        "401":
+          description: 验证失败
+          schema:
+            $ref: '#/definitions/server.RespJson'
         "500":
           description: 内部错误
           schema:
-            type: string
+            $ref: '#/definitions/server.RespJson'
       summary: 更新用户
       tags:
       - 用户操作

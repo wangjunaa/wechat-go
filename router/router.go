@@ -19,14 +19,21 @@ func Router() *gin.Engine {
 	r := gin.Default()
 	docs.SwaggerInfo.BasePath = ""
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	tool := r.Group("/tool")
+	{
+		tool.POST("/getMessageJson", server.GetMessageJson)
+	}
 	user := r.Group("/user")
 	{
-		user.GET("/find/:id", server.FindUser)
 		user.POST("/create", server.CreateUser)
+		user.POST("/login", server.Login)
+
+		user.Use(server.MwCheckToken)
+		user.GET("/find", server.FindUser)
 		user.POST("/delete", server.DeleteUser)
 		user.POST("/update", server.UpdateUser)
-		user.POST("/login", server.Login)
 	}
+	r.Use(server.MwCheckToken)
 	message := r.Group("/message")
 	{
 		message.GET("/getPush", server.GetPushMessage)
@@ -48,10 +55,6 @@ func Router() *gin.Engine {
 		group.POST("/delete", server.DeleteGroup)
 		group.POST("/removeMember", server.RemoveGroupMember)
 		group.POST("/inviteMember", server.InviteToGroup)
-	}
-	tool := r.Group("/tool")
-	{
-		tool.POST("/getMessageJson", server.GetMessageJson)
 	}
 	return r
 }

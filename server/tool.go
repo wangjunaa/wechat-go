@@ -1,7 +1,7 @@
 package server
 
 import (
-	Model "demo/models"
+	"demo/models"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 )
@@ -9,23 +9,23 @@ import (
 // GetMessageJson
 // @Summary 获取消息json格式
 // @Tags 工具
-// @Param message body Model.Message true "消息"
-// @Success 200 {string} string "成功"
-// @Failure 500 {string} string "内部错误"
-// @Failure 403 {string} string "拒绝访问"
-// @Failure 412 {string} string "先决条件错误"
+// @Param message body models.Message true "消息"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /tool/getMessageJson [post]
 func GetMessageJson(c *gin.Context) {
-	msg := &Model.Message{}
+	msg := &models.Message{}
 	err := c.ShouldBindJSON(msg)
 	if err != nil {
-		c.String(412, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	bytes, err := json.Marshal(msg)
 	if err != nil {
-		c.String(412, err.Error())
+		RespFailure(c, 500, err.Error())
 		return
 	}
-	c.String(200, string(bytes))
+	RespSuccess(c, 200, "成功", string(bytes), 1)
 }

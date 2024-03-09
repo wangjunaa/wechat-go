@@ -1,283 +1,208 @@
 package server
 
 import (
-	"demo/handle"
-	"demo/tools/token"
+	"demo/handler"
 	"github.com/gin-gonic/gin"
 )
-
-type membersJson struct {
-	MembersId []string `json:"members"`
-}
 
 // CreateGroup
 // @Summary 创建群组
 // @Tags 群
-// @Param x-token header string true "用户令牌"
-// @Param id query string true "用户id"
-// @Param members body membersJson true "初始群员id"
-// @Success 200 {object} Model.GroupBasic "成功"
-// @Failure 500 {string} string "内部错误"
-// @Failure 403 {string} string "拒绝访问"
-// @Failure 412 {string} string "先决条件错误"
+// @Param Authenticate header string true "用户令牌"
+// @Param members formData []string true "初始群员id,应包括群主"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /group/create [post]
 func CreateGroup(c *gin.Context) {
-	t := c.Request.Header.Get("x-token")
-	id := c.Query("id")
-	if ok := token.CheckToken(t, id); !ok {
-		c.String(403, "拒绝访问")
+	var members []string
+	members, ok := c.GetPostFormArray("members")
+	if !ok {
+		RespFailure(c, 400, "参数有误")
 		return
 	}
 
-	temp := membersJson{}
-	err := c.ShouldBindJSON(&temp)
+	id := c.GetString("id")
+	group, err := handler.CreateGroup(id, members)
 	if err != nil {
-		c.String(412, err.Error())
+		RespFailure(c, 500, err.Error())
 		return
 	}
-
-	group, err := handle.CreateGroup(id, temp.MembersId)
-	if err != nil {
-		c.String(500, err.Error())
-		return
-	}
-	c.JSON(200, group)
+	RespSuccess(c, 200, "成功", group, 1)
 }
 
 // DeleteGroup
 // @Summary 删除群聊
 // @Tags 群
-// @Param x-token header string true "用户令牌"
-// @Param id query string true "用户id"
-// @Param groupId query string true "群id"
-// @Success 200 {string} string "成功"
-// @Failure 500 {string} string "内部错误"
-// @Failure 403 {string} string "拒绝访问"
-// @Failure 412 {string} string "先决条件错误"
+// @Param Authenticate header string true "用户令牌"
+// @Param groupId formData string true "群id"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /group/delete [post]
 func DeleteGroup(c *gin.Context) {
-	t := c.Request.Header.Get("x-token")
-	id := c.Query("id")
-	if ok := token.CheckToken(t, id); !ok {
-		c.String(403, "拒绝访问")
+	id := c.GetString("id")
+	gid := c.PostForm("groupId")
+	if gid == "" {
+		RespFailure(c, 400, paramError.Error())
+		return
+	}
+	err := handler.CheckOwner(id, gid)
+	if err != nil {
+		RespFailure(c, 500, err.Error())
 		return
 	}
 
-	gid := c.Query("groupId")
-	err := handle.CheckOwner(id, gid)
+	err = handler.DeleteGroup(gid)
 	if err != nil {
-		c.String(412, err.Error())
+		RespFailure(c, 500, err.Error())
 		return
 	}
-
-	err = handle.DeleteGroup(gid)
-	if err != nil {
-		c.String(500, err.Error())
-		return
-	}
-	c.String(200, "OK")
+	RespSuccess(c, 200, "成功", nil, 1)
 }
 
 // RemoveGroupMember
 // @Summary 删除群员
 // @Tags 群
-// @Param x-token header string true "用户令牌"
-// @Param id query string true "用户id"
-// @Param groupId query string true "群id"
-// @Param deletedId query string true "被删除用户id"
-// @Success 200 {string} string "成功"
-// @Failure 500 {string} string "内部错误"
-// @Failure 403 {string} string "拒绝访问"
-// @Failure 412 {string} string "先决条件错误"
+// @Param Authenticate header string true "用户令牌"
+// @Param deletedId formData string true "被删除用户id"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /group/removeMember [post]
 func RemoveGroupMember(c *gin.Context) {
-	t := c.Request.Header.Get("x-token")
-	id := c.Query("id")
-	if ok := token.CheckToken(t, id); !ok {
-		c.String(403, "拒绝访问")
-		return
-	}
-
-	gid := c.Query("groupId")
-	err := handle.CheckOwner(id, gid)
+	gid := c.PostForm("groupId")
+	deletedId := c.PostForm("deletedId")
+	id := c.GetString("id")
+	err := handler.CheckOwner(id, gid)
 	if err != nil {
-		c.String(412, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
-
-	err = handle.CheckOwner(gid, id)
+	group, err := handler.RemoveGroupMember(gid, deletedId)
 	if err != nil {
-		c.String(412, err.Error())
+		RespFailure(c, 500, err.Error())
 		return
 	}
-
-	deletedId := c.Query("deletedId")
-	err = handle.RemoveGroupMember(gid, deletedId)
-	if err != nil {
-		c.String(500, err.Error())
-		return
-	}
-
-	c.String(200, "OK")
+	RespSuccess(c, 200, "成功", group, 1)
 }
 
 // InviteToGroup
 // @Summary 邀请入群
 // @Tags 群
-// @Param x-token header string true "用户令牌"
-// @Param id query string true "用户id"
-// @Param groupId query string true "群id"
-// @Param invitedMembers body membersJson true "被邀请用户id"
-// @Success 200 {string} string "成功"
-// @Failure 500 {string} string "内部错误"
-// @Failure 403 {string} string "拒绝访问"
-// @Failure 412 {string} string "先决条件错误"
+// @Param Authenticate header string true "用户令牌"
+// @Param groupId formData string true "群id"
+// @Param invitedMembers formData []string true "被邀请用户id"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /group/inviteMember [post]
 func InviteToGroup(c *gin.Context) {
-	t := c.Request.Header.Get("x-token")
-	id := c.Query("id")
-	if ok := token.CheckToken(t, id); !ok {
-		c.String(403, "拒绝访问")
-		return
-	}
-
-	gid := c.Query("groupId")
-	err := handle.CheckOwner(id, gid)
+	id := c.GetString("id")
+	gid := c.PostForm("groupId")
+	err := handler.CheckOwner(id, gid)
 	if err != nil {
-		c.String(412, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 
-	temp := membersJson{}
-	err = c.ShouldBindJSON(&temp)
+	members, ok := c.GetPostFormArray("invitedMembers")
+	if !ok {
+		RespFailure(c, 400, "参数错误")
+		return
+	}
+
+	group, err := handler.AddToGroup(gid, members)
 	if err != nil {
-		c.String(412, err.Error())
+		RespFailure(c, 500, err.Error())
 		return
 	}
-
-	err = handle.InviteToGroup(gid, temp.MembersId)
-	if err != nil {
-		c.String(500, err.Error())
-		return
-	}
-
-	c.String(200, "OK")
+	RespSuccess(c, 200, "成功", group, 1)
 }
 
 // GetGroupMembers
 // @Summary 获取群员信息
 // @Tags 群
-// @Param x-token header string true "用户令牌"
-// @Param id query string true "用户id"
-// @Param groupId query string true "群id"
-// @Success 200 {array} Model.ShowUser "成功"
-// @Failure 500 {string} string "内部错误"
-// @Failure 403 {string} string "拒绝访问"
-// @Failure 412 {string} string "先决条件错误"
+// @Param Authenticate header string true "用户令牌"
+// @Param groupId formData string true "群id"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /group/getMembers [get]
 func GetGroupMembers(c *gin.Context) {
-	t := c.Request.Header.Get("x-token")
-	id := c.Query("id")
-	if ok := token.CheckToken(t, id); !ok {
-		c.String(403, "拒绝访问")
-		return
-	}
-	gid := c.Query("groupId")
-	g, err := handle.GetGroupById(gid)
+	gid := c.DefaultPostForm("groupId", "")
+	g, err := handler.GetGroupById(gid)
 	if err != nil {
-		c.String(500, "内部错误")
+		RespFailure(c, 500, err.Error())
 		return
 	}
-	c.JSON(200, handle.UserListToShow(g.Members))
+	RespSuccess(c, 200, "成功", handler.UserListToShow(g.Members), 1)
 }
 
 // GetGroup
 // @Summary 获取群信息
 // @Tags 群
-// @Param x-token header string true "用户令牌"
-// @Param id query string true "用户id"
-// @Param groupId query string true "群id"
-// @Success 200 {object} Model.GroupBasic "成功"
-// @Failure 500 {string} string "内部错误"
-// @Failure 403 {string} string "拒绝访问"
-// @Failure 412 {string} string "先决条件错误"
+// @Param Authenticate header string true "用户令牌"
+// @Param groupId formData string true "群id"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /group/getGroup [get]
 func GetGroup(c *gin.Context) {
-	t := c.Request.Header.Get("x-token")
-	id := c.Query("id")
-	if ok := token.CheckToken(t, id); !ok {
-		c.String(403, "拒绝访问")
-		return
-	}
-
-	gid := c.Query("groupId")
-	group, err := handle.GetGroupById(gid)
+	gid := c.DefaultPostForm("groupId", "")
+	group, err := handler.GetGroupById(gid)
 	if err != nil {
-		c.String(500, err.Error())
+		RespFailure(c, 500, err.Error())
 		return
 	}
-
-	c.JSON(200, group)
+	RespSuccess(c, 200, "成功", group, 1)
 }
 
 // EnterGroupReq
 // @Summary 发送加群申请
 // @Tags 群
-// @Param x-token header string true "用户令牌"
-// @Param id query string true "用户id"
-// @Param groupId query string true "群id"
-// @Success 200 {string} string "成功"
-// @Failure 500 {string} string "内部错误"
-// @Failure 403 {string} string "拒绝访问"
-// @Failure 412 {string} string "先决条件错误"
+// @Param Authenticate header string true "用户令牌"
+// @Param groupId formData string true "群id"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /group/enterReq [post]
 func EnterGroupReq(c *gin.Context) {
-	t := c.Request.Header.Get("x-token")
-	id := c.Query("id")
-	if ok := token.CheckToken(t, id); !ok {
-		c.String(403, "拒绝访问")
-		return
-	}
-
-	gid := c.Query("groupId")
-	err := handle.EnterGroupReq(gid, id)
+	id := c.GetString("id")
+	gid := c.DefaultPostForm("groupId", "")
+	err := handler.EnterGroupReq(gid, id)
 	if err != nil {
-		c.String(500, err.Error())
+		RespFailure(c, 500, err.Error())
 		return
 	}
-	c.JSON(200, "成功")
+	RespSuccess(c, 200, "成功", nil, 1)
 }
 
 // EnterGroupAgree
-// @Summary 获取群信息
+// @Summary 同意群申请
 // @Tags 群
-// @Param x-token header string true "用户令牌"
-// @Param id query string true "用户id"
-// @Param groupId query string true "群id"
-// @Success 200 {string} string "成功"
-// @Failure 500 {string} string "内部错误"
-// @Failure 403 {string} string "拒绝访问"
-// @Failure 412 {string} string "先决条件错误"
+// @Param Authenticate header string true "用户令牌"
+// @Param groupId formData string true "群id"
+// @Param agreedId formData string true "被同意id"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /group/enterAgree [post]
 func EnterGroupAgree(c *gin.Context) {
-	t := c.Request.Header.Get("x-token")
-	id := c.Query("id")
-	if ok := token.CheckToken(t, id); !ok {
-		c.String(403, "拒绝访问")
-		return
-	}
-
-	gid := c.Query("groupId")
-	err := handle.CheckOwner(gid, id)
+	gid := c.DefaultPostForm("groupId", "")
+	agreedId := c.PostForm("agreedId")
+	err := handler.EnterGroupAgree(gid, agreedId)
 	if err != nil {
-		c.String(412, err.Error())
+		RespFailure(c, 500, err.Error())
 		return
 	}
-
-	err = handle.EnterGroupAgree(gid, id)
-	if err != nil {
-		c.String(500, err.Error())
-		return
-	}
-	c.JSON(200, "成功")
+	RespSuccess(c, 200, "成功", nil, 1)
 }

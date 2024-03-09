@@ -1,4 +1,4 @@
-package initSys
+package dao
 
 func Init() {
 	initConfig()

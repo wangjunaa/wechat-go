@@ -1,4 +1,4 @@
-package config
+package dao
 
 import (
 	"context"

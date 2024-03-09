@@ -1,4 +1,4 @@
-package initSys
+package dao
 
 import (
 	"github.com/spf13/viper"

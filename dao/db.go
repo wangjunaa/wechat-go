@@ -1,7 +1,6 @@
-package initSys
+package dao
 
 import (
-	"demo/config"
 	Model "demo/models"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -24,19 +23,19 @@ func initDB() {
 	var err error
 	dsn := dbGetUserDsn()
 	log.Println("dsn:", dsn)
-	config.DB, err = gorm.Open(mysql.Open(dsn))
+	DB, err = gorm.Open(mysql.Open(dsn))
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	err = config.DB.AutoMigrate(
+	err = DB.AutoMigrate(
 		&Model.UserBasic{},
 		&Model.GroupBasic{},
 		&Model.Message{},
 		&Model.FriendShip{},
 	)
 	if err != nil {
-		log.Println("tools.initSys.initDB:", err)
+		log.Println("utils.dao.initDB:", err)
 		return
 	}
 

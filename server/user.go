@@ -1,133 +1,93 @@
 package server
 
 import (
-	"demo/handle"
+	"demo/handler"
 	Model "demo/models"
-	"demo/tools/token"
 	"github.com/gin-gonic/gin"
 	"log"
-	"net/http"
 )
 
 // FindUser
 // @Summary 获取用户
 // @Tags 用户操作
-// @Param x-token query string true "用户令牌"
-// @Param id path string true "用户id"
-// @Success 200 {object} Model.ShowUser "成功"
-// @Failure 412 {string} string "先决条件错误"
-// @Router /user/find/{id} [get]
+// @Param Authenticate header string true "用户令牌"
+// @Param queriedId query string true "被查询用户Id"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
+// @Router /user/find [get]
 func FindUser(c *gin.Context) {
-	id := c.Param("id")
-	ts := c.Query("x-token")
-	ok := token.CheckToken(ts, id)
-	if !ok {
-		c.String(http.StatusForbidden, "拒绝访问")
-		return
-	}
-	u, err := handle.GetUser(id)
+	queriedId := c.Query("queriedId")
+	u, err := handler.GetUser(queriedId)
 	if err != nil {
-		c.String(http.StatusPreconditionFailed, err.Error())
+		RespFailure(c, 500, err.Error())
 		return
 	}
-	log.Println("serer.GetUser:", u)
-	c.JSON(http.StatusOK, u.ToShowUser())
-}
-
-// CreateUser
-// @Summary 创建用户
-// @Tags 用户操作
-// @Param json body Model.RegisterJson true "用户json"
-// @Success 200 {string} string "添加成功"
-// @Failure 412 {string} string "先决条件错误"
-// @Router /user/create [post]
-func CreateUser(c *gin.Context) {
-	var json Model.RegisterJson
-	err := c.ShouldBindJSON(&json)
-	if err != nil {
-		c.String(http.StatusPreconditionFailed, err.Error())
-		return
-	}
-
-	if json.Password1 != json.Password2 {
-		c.String(http.StatusPreconditionFailed, "两次密码不同")
-		return
-	}
-	err = handle.CreateUser(json)
-	if err != nil {
-		c.String(http.StatusPreconditionFailed, err.Error())
-		return
-	}
-	//fmt.Println("server.CreateUser:", id, password)
-	c.String(http.StatusOK, "添加成功")
+	//log.Println("serer.GetUser:", u)
+	RespSuccess(c, 200, "成功", u.ToShowUser(), 1)
 }
 
 // DeleteUser
 // @Summary 删除用户
 // @Tags 用户操作
-// @Param x-token query string true "用户令牌"
-// @Param id query string true "用户id"
-// @Param password query string true "密码"
-// @Success 200 {string} string "成功"
-// @Failure 412 {string} string "先决条件错误"
+// @Param Authenticate header string true "用户令牌"
+// @Param password formData string true "密码"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /user/delete [post]
 func DeleteUser(c *gin.Context) {
-	id := c.Query("id")
-	password := c.Query("password")
-	ts := c.Query("x-token")
-	ok := token.CheckToken(ts, id)
-	if !ok {
-		c.String(http.StatusForbidden, "拒绝访问")
-		return
-	}
-	err := handle.DeleteUser(id, password)
+	id := c.GetString("id")
+	password := c.PostForm("password")
+	err := handler.DeleteUser(id, password)
 	if err != nil {
-		c.String(http.StatusPreconditionFailed, err.Error())
+		RespFailure(c, 500, err.Error())
 		return
 	}
-	c.String(http.StatusOK, "删除成功")
+	RespSuccess(c, 200, "成功", nil, 1)
 }
 
 // UpdateUser
 // @Summary 更新用户
 // @Tags 用户操作
-// @Param x-token header string true "用户令牌"
+// @Param Authenticate header string true "用户令牌"
 // @Param user body Model.UserBasic true "用户json信息"
-// @Success 200 {string} string "成功"
-// @Failure 412 {string} string "先决条件错误"
-// @Failure 500 {string} string "内部错误"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /user/update [post]
 func UpdateUser(c *gin.Context) {
 	var userBasic Model.UserBasic
 	err := c.ShouldBindJSON(&userBasic)
 	if err != nil {
-		log.Println("server.UpdateUser:", "绑定数据错误")
-		c.String(http.StatusInternalServerError, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
-	ts := c.Request.Header.Get("x-token")
-	log.Println(ts)
-	ok := token.CheckToken(ts, userBasic.ID)
-	if !ok {
-		c.String(http.StatusForbidden, "拒绝访问")
+	id := c.GetString("id")
+	if id != userBasic.ID {
+		RespFailure(c, 401, "无法更新非本人信息")
 		return
 	}
-	err = handle.UpdateUser(userBasic)
+	err = handler.UpdateUser(userBasic)
 	if err != nil {
-		log.Println("server.UpdateUser:", "更新数据错误")
-		c.String(http.StatusPreconditionFailed, err.Error())
+		RespFailure(c, 500, err.Error())
 		return
 	}
-	c.String(http.StatusOK, "更新成功")
+	RespSuccess(c, 200, "成功", nil, 1)
 }
 
 // Login
 // @Summary 用户登录
 // @Tags 用户操作
-// @Param id header string true "用户id"
-// @Param password header string true "密码"
-// @Success 200 {string} string "成功"
-// @Failure 412 {string} string "先决条件错误"
+// @Param id formData string true "用户id"
+// @Param password formData string true "密码"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
 // @Router /user/login [post]
 func Login(c *gin.Context) {
 	defer func() {
@@ -135,12 +95,40 @@ func Login(c *gin.Context) {
 			log.Println("server.User.Login:", r)
 		}
 	}()
-	id := c.Request.Header.Get("id")
-	password := c.Request.Header.Get("password")
-	tk, err := handle.Login(id, password)
+	id := c.DefaultPostForm("id", "")
+	password := c.DefaultPostForm("password", "")
+	log.Println(id, password)
+	tk, err := handler.Login(id, password)
 	if err != nil {
-		c.String(http.StatusPreconditionFailed, err.Error())
+		RespFailure(c, 500, "登录失败")
 		return
 	}
-	c.String(http.StatusOK, tk)
+	RespSuccess(c, 200, "成功", tk, 1)
+}
+
+// CreateUser
+// @Summary 创建用户
+// @Tags 用户操作
+// @Param phone formData string true "用户手机"
+// @Param password formData string true "密码"
+// @Param userName formData string true "用户名"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
+// @Router /user/create [post]
+func CreateUser(c *gin.Context) {
+	phone := c.DefaultPostForm("phone", "")
+	password := c.DefaultPostForm("password", "")
+	userName := c.DefaultPostForm("userName", "")
+	if phone == "" || password == "" || userName == "" {
+		RespFailure(c, 400, "参数错误")
+	}
+	t, err := handler.CreateUser(phone, userName, password)
+	if err != nil {
+		RespFailure(c, 500, err.Error())
+		return
+	}
+	//fmt.Println("server.CreateUser:", id, password)
+	RespSuccess(c, 200, "成功", t, 1)
 }

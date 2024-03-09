@@ -1,4 +1,4 @@
-package Model
+package models
 
 import (
 	"fmt"
@@ -14,17 +14,6 @@ type ShowUser struct {
 	Birthday  *time.Time `json:"birthday"`
 	LoginTime *time.Time `json:"loginTime"`
 	Icon      []byte     `json:"icon"`
-}
-
-type FriendShip struct {
-	UserId1 string    `gorm:"primaryKey"`
-	UserId2 string    `gorm:"primaryKey"`
-	User1   UserBasic `gorm:"foreignKey:UserId1"`
-	User2   UserBasic `gorm:"foreignKey:UserId2"`
-}
-
-func (f *FriendShip) TableName() string {
-	return "FriendShip"
 }
 
 type UserBasic struct {
@@ -59,19 +48,4 @@ func (user *UserBasic) ToShowUser() ShowUser {
 		LoginTime: user.LoginTime,
 		Icon:      user.Icon,
 	}
-}
-
-type GroupBasic struct {
-	ID        uint `gorm:"primaryKey"`
-	CreatedAt *time.Time
-	UpdatedAt *time.Time
-	Name      string      `json:"name"`
-	OwnerId   string      `json:"ownerId"`
-	Icon      []byte      `json:"icon"`
-	Members   []UserBasic `json:"members" gorm:"many2many:user_groups"`
-	Type      int         `json:"type"`
-}
-
-func (g *GroupBasic) TableName() string {
-	return "GroupBasic"
 }

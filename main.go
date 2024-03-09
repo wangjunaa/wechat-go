@@ -1,17 +1,18 @@
 package main
 
 import (
-	"demo/initSys"
+	"demo/dao"
 	"demo/router"
 	"log"
 )
 
 func main() {
-	initSys.Init()
+	dao.Init()
 	r := router.Router()
 	err := r.Run(":8080")
 	if err != nil {
 		log.Println(err)
 		return
 	}
+
 }
