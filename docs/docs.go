@@ -596,6 +596,13 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "群id",
+                        "name": "groupId",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "被删除用户id",
                         "name": "deletedId",
                         "in": "formData",
@@ -1017,12 +1024,7 @@ const docTemplate = `{
         "models.Message": {
             "type": "object",
             "properties": {
-                "content": {
-                    "type": "array",
-                    "items": {
-                        "type": "integer"
-                    }
-                },
+                "content": {},
                 "contentType": {
                     "type": "integer"
                 },

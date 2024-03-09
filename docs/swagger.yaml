@@ -24,10 +24,7 @@ definitions:
     type: object
   models.Message:
     properties:
-      content:
-        items:
-          type: integer
-        type: array
+      content: {}
       contentType:
         type: integer
       createdAt:
@@ -464,6 +461,11 @@ paths:
       - description: 用户令牌
         in: header
         name: Authenticate
+        required: true
+        type: string
+      - description: 群id
+        in: formData
+        name: groupId
         required: true
         type: string
       - description: 被删除用户id

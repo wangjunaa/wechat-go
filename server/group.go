@@ -67,6 +67,7 @@ func DeleteGroup(c *gin.Context) {
 // @Summary 删除群员
 // @Tags 群
 // @Param Authenticate header string true "用户令牌"
+// @Param groupId formData string true "群id"
 // @Param deletedId formData string true "被删除用户id"
 // @Success 200 {object} RespJson "成功"
 // @Failure 401 {object} RespJson "验证失败"
