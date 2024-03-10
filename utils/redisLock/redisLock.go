@@ -12,12 +12,10 @@ type RedisMux struct {
 	Expiration        time.Duration    //过期时间
 	WatchDogCheckTime time.Duration    //看门狗检查时间，0则不开启
 	Done              chan interface{} //看门狗结束指令
-	lock              bool
 }
 
 func (mux *RedisMux) Lock() {
 	defer func() {
-		mux.lock = true
 		if mux.WatchDogCheckTime != 0 {
 			go mux.WatchDog()
 		}
@@ -34,11 +32,7 @@ func (mux *RedisMux) Lock() {
 }
 
 func (mux *RedisMux) UnLock() {
-	if !mux.lock {
-		return
-	}
 	defer func() {
-		mux.lock = false
 		if mux.WatchDogCheckTime != 0 {
 			mux.Done <- "unlock"
 		}
@@ -68,6 +62,7 @@ func (mux *RedisMux) WatchDog() {
 				dao.Rdb.SetEX(dao.BgCtx, mux.Key, mux.Id, mux.Expiration)
 			} else {
 				log.Println("utils.redisLock.WatchDog: 锁被更改，但看门狗未结束")
+				return
 			}
 		}
 	}

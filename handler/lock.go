@@ -10,29 +10,22 @@ var (
 	hUserKey = "user:1"
 
 	//redis分布式锁
-	rUserMux = redisLock.RedisMux{
+	userMux = redisLock.RedisMux{
 		Key:               "redisUsers",
 		Id:                "1",
 		Expiration:        10 * time.Second,
 		WatchDogCheckTime: 0,
 		Done:              make(chan interface{}),
 	}
-	//sql分布式锁
-	sUserMux = redisLock.RedisMux{
-		Key:               "sqlUsers",
-		Id:                "1",
-		Expiration:        10 * time.Second,
-		WatchDogCheckTime: 0,
-		Done:              make(chan interface{}),
-	}
-	sGroupMux = redisLock.RedisMux{
+	groupMux = redisLock.RedisMux{
 		Key:               "sqlGroup",
 		Id:                "1",
 		Expiration:        10 * time.Second,
 		WatchDogCheckTime: 0,
 		Done:              make(chan interface{}),
 	}
-	sFriendMux = redisLock.RedisMux{
+
+	friendMux = redisLock.RedisMux{
 		Key:               "sqlFriend",
 		Id:                "1",
 		Expiration:        10 * time.Second,

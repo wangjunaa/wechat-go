@@ -21,8 +21,6 @@ func CheckOwner(ownerId string, groupId string) error {
 
 }
 func CreateGroup(ownerId string, membersId []string) (Model.GroupBasic, error) {
-	sGroupMux.Lock()
-	defer sGroupMux.UnLock()
 	name := ""
 	group := Model.GroupBasic{
 		Name:    "",
@@ -44,12 +42,14 @@ func CreateGroup(ownerId string, membersId []string) (Model.GroupBasic, error) {
 		}
 		group.Members = append(group.Members, *user)
 	}
+	groupMux.Lock()
+	defer groupMux.UnLock()
 	err := dao.DB.Create(&group).Error
 	return group, err
 }
 func DeleteGroup(groupId string) error {
-	sGroupMux.Lock()
-	defer sGroupMux.UnLock()
+	groupMux.Lock()
+	defer groupMux.UnLock()
 	err := dao.DB.Table("user_groups").Where("group_basic_id=?", groupId).Delete(nil).Error
 	if err != nil {
 		return err
@@ -63,6 +63,8 @@ func DeleteGroup(groupId string) error {
 func RemoveGroupMember(groupId string, deletedId string) (*Model.GroupBasic, error) {
 	//log.Println(groupId, deletedId)
 
+	groupMux.Lock()
+	defer groupMux.UnLock()
 	group, err := GetGroupById(groupId)
 	if err != nil {
 		return nil, err
@@ -80,8 +82,6 @@ func RemoveGroupMember(groupId string, deletedId string) (*Model.GroupBasic, err
 		return nil, errors.New("群中无此成员")
 	}
 
-	sGroupMux.Lock()
-	defer sGroupMux.UnLock()
 	// 更新数据库中的群组信息
 	if err := dao.DB.Table("user_groups").
 		Where("group_basic_id=? and user_basic_id=?", groupId, deletedId).
@@ -100,14 +100,14 @@ func RemoveGroupMember(groupId string, deletedId string) (*Model.GroupBasic, err
 //		}
 //
 //		g.Members = append(g.Members, u)
-//		sGroupMux.Lock()
-//		defer sGroupMux.UnLock()
+//		groupMux.Lock()
+//		defer groupMux.UnLock()
 //		err = dao.DB.Model(g).Update("Members", g.Members).Error
 //		return err
 //	}
 func AddToGroup(groupId string, invitedMembers []string) (*Model.GroupBasic, error) {
-	sGroupMux.Lock()
-	defer sGroupMux.UnLock()
+	groupMux.Lock()
+	defer groupMux.UnLock()
 	group, err := GetGroupById(groupId)
 	if err != nil {
 		return nil, err

@@ -56,8 +56,8 @@ func FriendAgree(senderId string, receiveId string) error {
 	return err
 }
 func AddFriend(id1 string, id2 string) error {
-	sFriendMux.Lock()
-	defer sFriendMux.UnLock()
+	friendMux.Lock()
+	defer friendMux.UnLock()
 	friendShip := Model.FriendShip{
 		UserId1: id1,
 		UserId2: id2,
@@ -82,8 +82,8 @@ func GetFriendList(id string) ([]Model.ShowUser, error) {
 	return friends, nil
 }
 func DeleteFriend(id string, deletedId string) error {
-	sFriendMux.Lock()
-	defer sFriendMux.UnLock()
+	friendMux.Lock()
+	defer friendMux.UnLock()
 	var friendship Model.FriendShip
 	if err := dao.DB.
 		Where("user_id1 = ? AND user_id2 = ?", id, deletedId).

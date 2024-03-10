@@ -65,22 +65,14 @@ func GetUser(id string) (user *Model.UserBasic, err error) {
 }
 
 func addUserToRdb(user *Model.UserBasic) error {
-	rUserMux.Lock()
-	defer rUserMux.UnLock()
-	bytes, err := json.Marshal(user)
+	marshal, err := json.Marshal(user)
+	err = dao.Rdb.HSet(dao.BgCtx, hUserKey, user.ID, marshal).Err()
 	if err != nil {
 		return err
 	}
-	err = dao.Rdb.HSet(dao.BgCtx, hUserKey, user.ID, bytes).Err()
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 func addUserToDB(user Model.UserBasic) error {
-	sUserMux.Lock()
-	defer sUserMux.UnLock()
 	if err := dao.DB.Create(&user).Error; err != nil {
 		return err
 	}
@@ -95,13 +87,14 @@ func CreateUser(phone string, userName string, password string) (string, error) 
 	if u != nil {
 		return "", errors.New("用户名重复")
 	}
-
 	user := Model.UserBasic{
 		Phone:    phone,
 		UserName: userName,
 		ID:       id,
 		Password: encryption.Encode(password),
 	}
+	userMux.Lock()
+	defer userMux.UnLock()
 	if err := addUserToDB(user); err != nil {
 		return "", err
 	}
@@ -113,14 +106,12 @@ func CreateUser(phone string, userName string, password string) (string, error) 
 }
 
 func deleteUserFromRdb(user Model.UserBasic) error {
-	rUserMux.Lock()
-	defer rUserMux.UnLock()
 	err := dao.Rdb.HDel(dao.BgCtx, hUserKey, user.ID).Err()
 	return err
 }
 func deleteUserFromDB(user Model.UserBasic) error {
-	sUserMux.Lock()
-	defer sUserMux.UnLock()
+	userMux.Lock()
+	defer userMux.UnLock()
 	begin := dao.DB.Begin()
 	err := begin.Model(&Model.FriendShip{}).
 		Where("user_id1 =? or user_id2 =?", user.ID, user.ID).Delete(nil).Error
@@ -171,8 +162,8 @@ func DeleteUser(id string, password string) error {
 }
 
 func updateUserFromDB(user Model.UserBasic) error {
-	sUserMux.Lock()
-	defer sUserMux.UnLock()
+	userMux.Lock()
+	defer userMux.UnLock()
 	err := dao.DB.Updates(user).Error
 	return err
 }
