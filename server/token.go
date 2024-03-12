@@ -1,8 +1,8 @@
 package server
 
 import (
-	"demo/utils/token"
 	"github.com/gin-gonic/gin"
+	"wechat/utils/token"
 )
 
 func MwCheckToken(c *gin.Context) {

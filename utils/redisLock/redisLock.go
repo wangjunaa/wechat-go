@@ -1,9 +1,9 @@
 package redisLock
 
 import (
-	"demo/dao"
 	"log"
 	"time"
+	"wechat/dao"
 )
 
 type RedisMux struct {

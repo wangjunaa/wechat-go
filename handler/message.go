@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"demo/dao"
-	Model "demo/models"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -10,6 +8,8 @@ import (
 	"net/http"
 	"sync"
 	"time"
+	"wechat/dao"
+	Model "wechat/models"
 )
 
 var (

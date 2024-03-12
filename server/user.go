@@ -1,10 +1,10 @@
 package server
 
 import (
-	"demo/handler"
-	Model "demo/models"
 	"github.com/gin-gonic/gin"
 	"log"
+	"wechat/handler"
+	Model "wechat/models"
 )
 
 // FindUser
@@ -21,7 +21,7 @@ func FindUser(c *gin.Context) {
 	queriedId := c.Query("queriedId")
 	u, err := handler.GetUser(queriedId)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	//log.Println("serer.GetUser:", u)
@@ -43,7 +43,7 @@ func DeleteUser(c *gin.Context) {
 	password := c.PostForm("password")
 	err := handler.DeleteUser(id, password)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", nil, 1)
@@ -73,7 +73,7 @@ func UpdateUser(c *gin.Context) {
 	}
 	err = handler.UpdateUser(userBasic)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", nil, 1)
@@ -100,7 +100,7 @@ func Login(c *gin.Context) {
 	log.Println(id, password)
 	tk, err := handler.Login(id, password)
 	if err != nil {
-		RespFailure(c, 500, "登录失败")
+		RespFailure(c, 400, "登录失败")
 		return
 	}
 	RespSuccess(c, 200, "成功", tk, 1)
@@ -126,9 +126,24 @@ func CreateUser(c *gin.Context) {
 	}
 	t, err := handler.CreateUser(phone, userName, password)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	//fmt.Println("server.CreateUser:", id, password)
 	RespSuccess(c, 200, "成功", t, 1)
+}
+
+// IsUserExist
+// @Summary 判断是否存在用户
+// @Tags 用户操作
+// @Param phone query string true "用户手机"
+// @Success 200 {object} RespJson "成功"
+// @Failure 401 {object} RespJson "验证失败"
+// @Failure 400 {object} RespJson "参数有误"
+// @Failure 500 {object} RespJson "内部错误"
+// @Router /user/exist [get]
+func IsUserExist(c *gin.Context) {
+	phone := c.Query("phone")
+	exist := handler.IsUserExist(phone)
+	RespSuccess(c, 200, "成功", exist, 1)
 }

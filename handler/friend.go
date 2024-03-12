@@ -1,10 +1,10 @@
 package handler
 
 import (
-	"demo/dao"
-	Model "demo/models"
 	"errors"
 	"log"
+	"wechat/dao"
+	Model "wechat/models"
 )
 
 func IsFriend(id1 string, id2 string) bool {

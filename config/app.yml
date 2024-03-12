@@ -3,7 +3,7 @@ mysql:
   password: 81512851
   ip: 127.0.0.1
   port: 3306
-  dbName: demo
+  dbName: wechat
   charset: utf8mb4&parseTime=True&loc=Local
 redis:
   poolSize: 16

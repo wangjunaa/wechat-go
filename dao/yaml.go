@@ -11,8 +11,7 @@ func initConfig() {
 	viper.AddConfigPath("config")
 	err := viper.ReadInConfig()
 	if err != nil {
-		log.Println("initConfig: 配置文件读取错误!")
-		return
+		panic(err.Error())
 	}
 	log.Println("initConfig Success")
 }

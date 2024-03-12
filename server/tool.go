@@ -1,9 +1,9 @@
 package server
 
 import (
-	"demo/models"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"wechat/models"
 )
 
 // GetMessageJson
@@ -24,7 +24,7 @@ func GetMessageJson(c *gin.Context) {
 	}
 	bytes, err := json.Marshal(msg)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", string(bytes), 1)

@@ -821,6 +821,49 @@
                 }
             }
         },
+        "/user/exist": {
+            "get": {
+                "tags": [
+                    "用户操作"
+                ],
+                "summary": "判断是否存在用户",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "用户手机",
+                        "name": "phone",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "400": {
+                        "description": "参数有误",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "401": {
+                        "description": "验证失败",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    },
+                    "500": {
+                        "description": "内部错误",
+                        "schema": {
+                            "$ref": "#/definitions/server.RespJson"
+                        }
+                    }
+                }
+            }
+        },
         "/user/find": {
             "get": {
                 "tags": [

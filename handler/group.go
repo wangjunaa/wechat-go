@@ -1,11 +1,11 @@
 package handler
 
 import (
-	"demo/dao"
-	Model "demo/models"
 	"encoding/json"
 	"errors"
 	"time"
+	"wechat/dao"
+	Model "wechat/models"
 )
 
 func CheckOwner(ownerId string, groupId string) error {

@@ -1,10 +1,10 @@
 package token
 
 import (
-	"demo/dao"
 	"github.com/dgrijalva/jwt-go"
 	"log"
 	"time"
+	"wechat/dao"
 )
 
 // CreateToken 创建token

@@ -1,8 +1,8 @@
 package server
 
 import (
-	"demo/handler"
 	"github.com/gin-gonic/gin"
+	"wechat/handler"
 )
 
 // CreateGroup
@@ -26,7 +26,7 @@ func CreateGroup(c *gin.Context) {
 	id := c.GetString("id")
 	group, err := handler.CreateGroup(id, members)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", group, 1)
@@ -51,13 +51,13 @@ func DeleteGroup(c *gin.Context) {
 	}
 	err := handler.CheckOwner(id, gid)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 
 	err = handler.DeleteGroup(gid)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", nil, 1)
@@ -85,7 +85,7 @@ func RemoveGroupMember(c *gin.Context) {
 	}
 	group, err := handler.RemoveGroupMember(gid, deletedId)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", group, 1)
@@ -119,7 +119,7 @@ func InviteToGroup(c *gin.Context) {
 
 	group, err := handler.AddToGroup(gid, members)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", group, 1)
@@ -139,7 +139,7 @@ func GetGroupMembers(c *gin.Context) {
 	gid := c.DefaultPostForm("groupId", "")
 	g, err := handler.GetGroupById(gid)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", handler.UserListToShow(g.Members), 1)
@@ -159,7 +159,7 @@ func GetGroup(c *gin.Context) {
 	gid := c.DefaultPostForm("groupId", "")
 	group, err := handler.GetGroupById(gid)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", group, 1)
@@ -180,7 +180,7 @@ func EnterGroupReq(c *gin.Context) {
 	gid := c.DefaultPostForm("groupId", "")
 	err := handler.EnterGroupReq(gid, id)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", nil, 1)
@@ -202,7 +202,7 @@ func EnterGroupAgree(c *gin.Context) {
 	agreedId := c.PostForm("agreedId")
 	err := handler.EnterGroupAgree(gid, agreedId)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", nil, 1)

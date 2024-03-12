@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"demo/utils/redisLock"
 	"time"
+	"wechat/utils/redisLock"
 )
 
 var (

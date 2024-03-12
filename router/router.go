@@ -1,12 +1,14 @@
 package router
 
 import (
-	"demo/docs"
-	"demo/server"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"io"
+	"os"
+	"wechat/docs"
+	"wechat/server"
 )
 
 func Router() *gin.Engine {
@@ -16,6 +18,11 @@ func Router() *gin.Engine {
 			fmt.Println("router.Router:", err)
 		}
 	}()
+	logFile, err := os.Create("gin.log")
+	gin.DefaultWriter = io.MultiWriter(logFile)
+	if err != nil {
+		panic(err)
+	}
 	r := gin.Default()
 	docs.SwaggerInfo.BasePath = ""
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
@@ -27,6 +34,7 @@ func Router() *gin.Engine {
 	{
 		user.POST("/create", server.CreateUser)
 		user.POST("/login", server.Login)
+		user.GET("/exist", server.IsUserExist)
 
 		user.Use(server.MwCheckToken)
 		user.GET("/find", server.FindUser)

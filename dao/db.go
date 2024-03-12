@@ -1,11 +1,11 @@
 package dao
 
 import (
-	Model "demo/models"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
+	Model "wechat/models"
 )
 
 func dbGetUserDsn() string {
@@ -31,11 +31,10 @@ func initDB() {
 	err = DB.AutoMigrate(
 		&Model.UserBasic{},
 		&Model.GroupBasic{},
-		&Model.Message{},
 		&Model.FriendShip{},
 	)
 	if err != nil {
-		log.Println("utils.dao.initDB:", err)
+		panic(err)
 		return
 	}
 

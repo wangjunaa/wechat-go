@@ -1,8 +1,8 @@
 package server
 
 import (
-	"demo/handler"
 	"github.com/gin-gonic/gin"
+	"wechat/handler"
 )
 
 // FriendReq
@@ -19,7 +19,7 @@ func FriendReq(c *gin.Context) {
 	id := c.GetString("id")
 	requestedId := c.DefaultPostForm("requestedId", "")
 	if err := handler.FriendReq(id, requestedId); err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", nil, 1)
@@ -39,7 +39,7 @@ func FriendAgree(c *gin.Context) {
 	id := c.GetString("id")
 	agreedId := c.DefaultPostForm("agreedId", "")
 	if err := handler.FriendAgree(id, agreedId); err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", nil, 1)
@@ -59,7 +59,7 @@ func GetFriendList(c *gin.Context) {
 
 	friendList, err := handler.GetFriendList(id)
 	if err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", friendList, 1)
@@ -79,7 +79,7 @@ func DeleteFriend(c *gin.Context) {
 	id := c.GetString("id")
 	deletedId := c.DefaultPostForm("deletedId", "")
 	if err := handler.DeleteFriend(id, deletedId); err != nil {
-		RespFailure(c, 500, err.Error())
+		RespFailure(c, 400, err.Error())
 		return
 	}
 	RespSuccess(c, 200, "成功", nil, 1)

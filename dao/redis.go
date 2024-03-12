@@ -16,7 +16,7 @@ func initRedis() {
 	})
 	result, err := Rdb.Ping(BgCtx).Result()
 	if err != nil {
-		log.Println("initRedis:", err)
+		panic(err)
 		return
 	}
 	log.Println("initRedis:", result)

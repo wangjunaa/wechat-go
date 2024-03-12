@@ -1,9 +1,9 @@
 package main
 
 import (
-	"demo/dao"
-	"demo/router"
 	"log"
+	"wechat/dao"
+	"wechat/router"
 )
 
 func main() {

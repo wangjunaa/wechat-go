@@ -1,8 +1,8 @@
 package server
 
 import (
-	"demo/handler"
 	"github.com/gin-gonic/gin"
+	"wechat/handler"
 )
 
 // GetPushMessage

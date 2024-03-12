@@ -1,15 +1,15 @@
 package handler
 
 import (
-	"demo/dao"
-	Model "demo/models"
-	"demo/utils/encryption"
-	"demo/utils/token"
 	"encoding/json"
 	"errors"
 	"github.com/go-redis/redis/v8"
 	"log"
 	"time"
+	"wechat/dao"
+	Model "wechat/models"
+	"wechat/utils/encryption"
+	"wechat/utils/token"
 )
 
 // UserListToShow 将userBasic列表转为showUser列表
@@ -202,4 +202,9 @@ func Login(id string, password string) (string, error) {
 		return "", err
 	}
 	return tk, nil
+}
+
+func IsUserExist(phone string) bool {
+	user, _ := GetUser(phone)
+	return user != nil
 }
