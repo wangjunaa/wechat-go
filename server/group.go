@@ -3,6 +3,7 @@ package server
 import (
 	"github.com/gin-gonic/gin"
 	"wechat/handler"
+	"wechat/models"
 )
 
 // CreateGroup
@@ -136,13 +137,13 @@ func InviteToGroup(c *gin.Context) {
 // @Failure 500 {object} RespJson "内部错误"
 // @Router /group/getMembers [get]
 func GetGroupMembers(c *gin.Context) {
-	gid := c.DefaultPostForm("groupId", "")
-	g, err := handler.GetGroupById(gid)
+	gid := c.PostForm("groupId")
+	g, err := handler.GetGroup(gid)
 	if err != nil {
 		RespFailure(c, 400, err.Error())
 		return
 	}
-	RespSuccess(c, 200, "成功", handler.UserListToShow(g.Members), 1)
+	RespSuccess(c, 200, "成功", models.UserListToShow(g.Members), 1)
 }
 
 // GetGroup
@@ -156,8 +157,8 @@ func GetGroupMembers(c *gin.Context) {
 // @Failure 500 {object} RespJson "内部错误"
 // @Router /group/getGroup [get]
 func GetGroup(c *gin.Context) {
-	gid := c.DefaultPostForm("groupId", "")
-	group, err := handler.GetGroupById(gid)
+	gid := c.PostForm("groupId")
+	group, err := handler.GetGroup(gid)
 	if err != nil {
 		RespFailure(c, 400, err.Error())
 		return
@@ -200,7 +201,14 @@ func EnterGroupReq(c *gin.Context) {
 func EnterGroupAgree(c *gin.Context) {
 	gid := c.DefaultPostForm("groupId", "")
 	agreedId := c.PostForm("agreedId")
-	err := handler.EnterGroupAgree(gid, agreedId)
+	id := c.GetString("id")
+	//判断是否为群主操作
+	err := handler.CheckOwner(id, gid)
+	if err != nil {
+		RespFailure(c, 400, err.Error())
+		return
+	}
+	err = handler.EnterGroupAgree(gid, agreedId)
 	if err != nil {
 		RespFailure(c, 400, err.Error())
 		return

@@ -1,6 +1,7 @@
 package redisLock
 
 import (
+	"context"
 	"log"
 	"time"
 	"wechat/dao"
@@ -23,7 +24,7 @@ func (mux *RedisMux) Lock() {
 	lockSuccess := false
 	var err error
 	for !lockSuccess {
-		lockSuccess, err = dao.Rdb.SetNX(dao.BgCtx, mux.Key, mux.Id, mux.Expiration).Result()
+		lockSuccess, err = dao.Rdb.SetNX(context.Background(), mux.Key, mux.Id, mux.Expiration).Result()
 		if err != nil {
 			log.Println("RedisLock.Lock:", err)
 			return
@@ -37,7 +38,7 @@ func (mux *RedisMux) UnLock() {
 			mux.Done <- "unlock"
 		}
 	}()
-	id, err := dao.Rdb.Get(dao.BgCtx, mux.Key).Result()
+	id, err := dao.Rdb.Get(context.Background(), mux.Key).Result()
 	if err != nil {
 		log.Println("RedisLock.Unlock:", err)
 		return
@@ -45,7 +46,7 @@ func (mux *RedisMux) UnLock() {
 	if id != mux.Id {
 		return
 	}
-	dao.Rdb.Del(dao.BgCtx, mux.Key)
+	dao.Rdb.Del(context.Background(), mux.Key)
 }
 func (mux *RedisMux) WatchDog() {
 	for {
@@ -54,12 +55,12 @@ func (mux *RedisMux) WatchDog() {
 		case <-mux.Done:
 			return
 		default:
-			id, err := dao.Rdb.Get(dao.BgCtx, mux.Key).Result()
+			id, err := dao.Rdb.Get(context.Background(), mux.Key).Result()
 			if err != nil {
 				return
 			}
 			if id == mux.Id {
-				dao.Rdb.SetEX(dao.BgCtx, mux.Key, mux.Id, mux.Expiration)
+				dao.Rdb.SetEX(context.Background(), mux.Key, mux.Id, mux.Expiration)
 			} else {
 				log.Println("utils.redisLock.WatchDog: 锁被更改，但看门狗未结束")
 				return

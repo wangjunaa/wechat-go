@@ -9,6 +9,7 @@ import (
 
 // CreateToken 创建token
 func CreateToken(id string) (string, error) {
+
 	c := jwt.StandardClaims{
 		Issuer:    dao.Issuer,
 		IssuedAt:  time.Now().Unix(),

@@ -19,12 +19,12 @@ import (
 // @Router /user/find [get]
 func FindUser(c *gin.Context) {
 	queriedId := c.Query("queriedId")
-	u, err := handler.GetUser(queriedId)
+	u, err := handler.FindUser(queriedId)
 	if err != nil {
 		RespFailure(c, 400, err.Error())
 		return
 	}
-	//log.Println("serer.GetUser:", u)
+	//log.Println("serer.FindUser:", u)
 	RespSuccess(c, 200, "成功", u.ToShowUser(), 1)
 }
 

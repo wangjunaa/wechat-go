@@ -18,6 +18,7 @@ import (
 func FriendReq(c *gin.Context) {
 	id := c.GetString("id")
 	requestedId := c.DefaultPostForm("requestedId", "")
+
 	if err := handler.FriendReq(id, requestedId); err != nil {
 		RespFailure(c, 400, err.Error())
 		return

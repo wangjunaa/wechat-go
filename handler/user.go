@@ -1,101 +1,120 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"github.com/go-redis/redis/v8"
+	"gorm.io/gorm"
 	"log"
 	"time"
 	"wechat/dao"
-	Model "wechat/models"
+	"wechat/models"
 	"wechat/utils/encryption"
 	"wechat/utils/token"
 )
 
-// UserListToShow 将userBasic列表转为showUser列表
-func UserListToShow(users []Model.UserBasic) []Model.ShowUser {
-	var su []Model.ShowUser
-	for _, user := range users {
-		su = append(su, user.ToShowUser())
-	}
-	return su
+var (
+	userPrefix     = "user:"
+	expirationTime = 7 * 24 * 60 * 60 * time.Second
+	delayDelTime   = 3 * time.Second
+)
+
+func setUserNotExistToRdb(id string) error {
+	err := dao.Rdb.Set(context.Background(), userPrefix+id, "", expirationTime).Err()
+	return err
 }
 
-func getUserFromRdb(id string) (user *Model.UserBasic, err error) {
-	result, err := dao.Rdb.HGet(dao.BgCtx, hUserKey, id).Result()
+// 从缓存获取用户数据
+func findUserFromRdb(id string) (user *models.UserBasic, err error) {
+	result, err := dao.Rdb.Get(context.Background(), userPrefix+id).Result()
 	if err != nil {
 		return user, err
+	}
+	//判断数据库中是否存在值
+	if result == "" {
+		return nil, gorm.ErrRecordNotFound
 	}
 	err = json.Unmarshal([]byte(result), &user)
 	if err != nil {
 		return user, err
 	}
-	//log.Println("getUserFromRdb:", user)
+	//log.Println("findUserFromRdb:", user)
 	return user, nil
 }
-func getUserFromDB(id string) (user *Model.UserBasic, err error) {
-	if err = dao.DB.First(&user, "id=?", id).Error; err != nil {
+
+// 从数据库获取用户数据
+func findUserFromDB(id string) (user *models.UserBasic, err error) {
+	user = &models.UserBasic{}
+	if err = dao.DB.Where("id=?", id).First(user).Error; err != nil {
 		return user, err
 	}
-	//log.Println("getUserFromDB:", user)
+	//log.Println("findUserFromDB:", user)
 	return user, err
 }
 
-// GetUser 当发生错误或未找到记录 user返回nil
-func GetUser(id string) (user *Model.UserBasic, err error) {
-	user, err = getUserFromRdb(id)
+// FindUser 用户不存在，err返回gorm.ErrRecordNotFound
+func FindUser(id string) (user *models.UserBasic, err error) {
+	user, err = findUserFromRdb(id)
 	if err != nil && !errors.Is(err, redis.Nil) {
-		return user, err
+		return nil, err
 	}
 	//在redis中查询到结果则直接返回
 	if err == nil {
 		return user, nil
 	}
 	//从数据库中获取
-	user, err = getUserFromDB(id)
+	user, err = findUserFromDB(id)
 	if err != nil {
+		//若数据库不存在信息，则将无信息记录进缓存
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			if err := setUserNotExistToRdb(id); err != nil {
+				return nil, err
+			}
+		}
 		return nil, err
 	}
 	//将数据加入rdb
 	err = addUserToRdb(user)
-	if err != nil {
-		return nil, err
-	}
-	return user, nil
+	return user, err
 }
 
-func addUserToRdb(user *Model.UserBasic) error {
+func addUserToRdb(user *models.UserBasic) error {
 	marshal, err := json.Marshal(user)
-	err = dao.Rdb.HSet(dao.BgCtx, hUserKey, user.ID, marshal).Err()
+	err = dao.Rdb.Set(context.Background(), userPrefix+user.ID, marshal, expirationTime).Err()
 	if err != nil {
 		return err
 	}
 	return nil
 }
-func addUserToDB(user Model.UserBasic) error {
+
+func addUserToDB(user models.UserBasic) error {
 	if err := dao.DB.Create(&user).Error; err != nil {
 		return err
 	}
 	return nil
 }
+
 func CreateUser(phone string, userName string, password string) (string, error) {
 	id := phone
-	u, err := GetUser(id)
-	if err != nil && u != nil {
+	u, err := FindUser(id)
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return "", err
 	}
 	if u != nil {
 		return "", errors.New("用户名重复")
 	}
-	user := Model.UserBasic{
+	user := models.UserBasic{
 		Phone:    phone,
 		UserName: userName,
 		ID:       id,
 		Password: encryption.Encode(password),
 	}
-	userMux.Lock()
-	defer userMux.UnLock()
 	if err := addUserToDB(user); err != nil {
+		return "", err
+	}
+	//防止缓存还认为数据库无数据
+	if err := deleteUserFromRdb(user); err != nil {
 		return "", err
 	}
 	t, err := token.CreateToken(id)
@@ -105,25 +124,27 @@ func CreateUser(phone string, userName string, password string) (string, error) 
 	return t, nil
 }
 
-func deleteUserFromRdb(user Model.UserBasic) error {
-	err := dao.Rdb.HDel(dao.BgCtx, hUserKey, user.ID).Err()
+func deleteUserFromRdb(user models.UserBasic) error {
+	err := dao.Rdb.Del(context.Background(), userPrefix+user.ID).Err()
 	return err
 }
-func deleteUserFromDB(user Model.UserBasic) error {
-	userMux.Lock()
-	defer userMux.UnLock()
+
+func deleteUserFromDB(user models.UserBasic) error {
 	begin := dao.DB.Begin()
-	err := begin.Model(&Model.FriendShip{}).
+	//删除好友关系
+	err := begin.Model(&models.FriendShip{}).
 		Where("user_id1 =? or user_id2 =?", user.ID, user.ID).Delete(nil).Error
 	if err != nil {
 		begin.Rollback()
 		return err
 	}
+	//删除群组关系
 	err = begin.Table("user_groups").Where("user_basic_id=?", user.ID).Delete(nil).Error
 	if err != nil {
 		begin.Rollback()
 		return err
 	}
+	//删除用户
 	err = begin.Delete(user).Error
 	if err != nil {
 		begin.Rollback()
@@ -136,56 +157,49 @@ func deleteUserFromDB(user Model.UserBasic) error {
 	}
 	return err
 }
-func DeleteUser(id string, password string) error {
-	user := Model.UserBasic{}
-	res := dao.DB.Where("id = ?", id).First(&user)
 
+func DeleteUser(id string, password string) error {
+	user := models.UserBasic{ID: id}
+	res := dao.DB.Model(user).First(&user)
 	if res.Error != nil {
 		return res.Error
 	}
+
 	if !encryption.IsEqualAfterEncode(password, user.Password) {
 		return errors.New("密码错误")
 	}
 
-	//延时双删
-	err := deleteUserFromRdb(user)
+	err := deleteUserFromDB(user)
 	if err != nil {
 		return err
 	}
-	err = deleteUserFromDB(user)
-	if err != nil {
-		return err
-	}
-	time.Sleep(3)
 	err = deleteUserFromRdb(user)
 	return err
 }
 
-func updateUserFromDB(user Model.UserBasic) error {
-	userMux.Lock()
-	defer userMux.UnLock()
-	err := dao.DB.Updates(user).Error
+func updateUserFromDB(user models.UserBasic) error {
+	err := dao.DB.Model(user).Updates(&user).Error
 	return err
 }
-func UpdateUser(user Model.UserBasic) error {
-	//延迟双删
 
+func UpdateUser(user models.UserBasic) error {
+	//延迟双删
 	if err := deleteUserFromRdb(user); err != nil {
 		return err
 	}
 	if err := updateUserFromDB(user); err != nil {
 		return err
 	}
-	time.Sleep(3)
-	if err := deleteUserFromRdb(user); err != nil {
-		return err
-	}
+	go func() {
+		time.Sleep(delayDelTime)
+		_ = deleteUserFromRdb(user)
+	}()
 	return nil
 }
 
 func Login(id string, password string) (string, error) {
 
-	var user Model.UserBasic
+	var user models.UserBasic
 	res := dao.DB.Where("id = ? and password = ?", id, encryption.Encode(password)).First(&user)
 	if res.Error != nil {
 		return "", errors.New("用户名或密码错误")
@@ -196,15 +210,15 @@ func Login(id string, password string) (string, error) {
 		log.Println("handler.user_handle.Login:", err)
 		return "", err
 	}
-	res = dao.DB.Model(&user).Updates(Model.UserBasic{LoginTime: &now})
+	res = dao.DB.Model(&user).Updates(models.UserBasic{LoginTime: &now})
 	if res.Error != nil {
-		log.Println("handler.user_handle.Login:", err)
+		//log.Println("handler.user_handle.Login:", err)
 		return "", err
 	}
 	return tk, nil
 }
 
 func IsUserExist(phone string) bool {
-	user, _ := GetUser(phone)
+	user, _ := FindUser(phone)
 	return user != nil
 }

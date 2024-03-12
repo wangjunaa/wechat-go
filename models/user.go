@@ -49,3 +49,12 @@ func (user *UserBasic) ToShowUser() ShowUser {
 		Icon:      user.Icon,
 	}
 }
+
+// UserListToShow 将userBasic列表转为showUser列表
+func UserListToShow(users []UserBasic) []ShowUser {
+	var su []ShowUser
+	for _, user := range users {
+		su = append(su, user.ToShowUser())
+	}
+	return su
+}

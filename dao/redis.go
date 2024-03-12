@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"context"
 	"github.com/go-redis/redis/v8"
 	"github.com/spf13/viper"
 	"log"
@@ -14,7 +15,7 @@ func initRedis() {
 		MinIdleConns: viper.GetInt("redis.minIdleConn"),
 		PoolSize:     viper.GetInt("redis.poolSize"),
 	})
-	result, err := Rdb.Ping(BgCtx).Result()
+	result, err := Rdb.Ping(context.Background()).Result()
 	if err != nil {
 		panic(err)
 		return

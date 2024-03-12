@@ -1,16 +1,145 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"github.com/go-redis/redis/v8"
+	"gorm.io/gorm"
+	"strconv"
 	"time"
 	"wechat/dao"
 	Model "wechat/models"
 )
 
+var (
+	groupDataPreFix = "group:"
+	groupReqPreFix  = "groupReq:"
+)
+
+func setGroupNotExist(gid string) error {
+	err := dao.Rdb.Set(context.Background(), groupDataPreFix+gid, "", expirationTime).Err()
+	return err
+}
+
+func getGroupFromDB(gid string) (*Model.GroupBasic, error) {
+	group := &Model.GroupBasic{}
+	err := dao.DB.Preload("Members").First(&group, "id=?", gid).Error
+	if err != nil {
+		return nil, err
+	}
+	return group, nil
+}
+
+func getGroupFromRdb(gid string) (*Model.GroupBasic, error) {
+	result, err := dao.Rdb.Get(context.Background(), groupDataPreFix+gid).Result()
+	if err != nil {
+		return nil, err
+	}
+	if result == "" {
+		return nil, gorm.ErrRecordNotFound
+	}
+	group := &Model.GroupBasic{}
+	err = json.Unmarshal([]byte(result), group)
+	if err != nil {
+		return nil, err
+	}
+	return group, nil
+
+}
+
+func addGroupToRdb(group *Model.GroupBasic) error {
+	data, err := json.Marshal(group)
+	if err != nil {
+		return err
+	}
+	err = dao.Rdb.Set(context.Background(), groupDataPreFix+strconv.Itoa(int(group.ID)), data, expirationTime).Err()
+	return err
+}
+
+func GetGroup(gid string) (*Model.GroupBasic, error) {
+	group, err := getGroupFromRdb(gid)
+	if err != nil && !errors.Is(err, redis.Nil) {
+		return nil, err
+	}
+	//redis查询到值
+	if !errors.Is(err, redis.Nil) {
+		return group, nil
+	}
+
+	group, err = getGroupFromDB(gid)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			if err := setGroupNotExist(gid); err != nil {
+				return nil, err
+			}
+		}
+		return nil, err
+	}
+
+	err = addGroupToRdb(group)
+	return group, err
+}
+
+func deleteGroupFromDB(gid string) error {
+	err := dao.DB.Table("user_groups").Where("group_basic_id=?", gid).Delete(nil).Error
+	if err != nil {
+		return err
+	}
+	err = dao.DB.Model(Model.GroupBasic{}).Where("id=?", gid).Delete(nil).Error
+	return err
+}
+
+func deleteGroupFromRdb(gid string) error {
+	err := dao.Rdb.Del(context.Background(), groupDataPreFix+gid).Err()
+	return err
+}
+
+func InitGroup(ownerId string, membersIDs []string) (*Model.GroupBasic, error) {
+	group := &Model.GroupBasic{
+		Name:    "",
+		OwnerId: ownerId,
+		Icon:    nil,
+		Type:    0,
+	}
+	for i, id := range membersIDs {
+		user, err := FindUser(id)
+		if err != nil {
+			return nil, err
+		}
+		//初始化群名
+		if i < 3 {
+			group.Name += user.UserName
+			if i < 2 {
+				group.Name += "、"
+			}
+		}
+		group.Members = append(group.Members, *user)
+	}
+	return group, nil
+}
+
+func CreateGroup(ownerId string, membersIDs []string) (*Model.GroupBasic, error) {
+	group, err := InitGroup(ownerId, membersIDs)
+	err = dao.DB.Create(group).Error
+	if err != nil {
+		return nil, err
+	}
+	err = deleteGroupFromRdb(strconv.Itoa(int(group.ID)))
+	return group, err
+}
+
+func getGroupOwner(gid string) (string, error) {
+	group, err := GetGroup(gid)
+	if err != nil {
+		return "", err
+	}
+	return group.OwnerId, nil
+}
+
+// CheckOwner 若非群主则报错
 func CheckOwner(ownerId string, groupId string) error {
-	var group Model.GroupBasic
-	err := dao.DB.First(&group, "id=?", groupId).Error
+	group, err := GetGroup(groupId)
 	if err != nil {
 		return err
 	}
@@ -18,54 +147,18 @@ func CheckOwner(ownerId string, groupId string) error {
 		return errors.New("非群主操作")
 	}
 	return nil
+}
 
-}
-func CreateGroup(ownerId string, membersId []string) (Model.GroupBasic, error) {
-	name := ""
-	group := Model.GroupBasic{
-		Name:    "",
-		OwnerId: ownerId,
-		Icon:    nil,
-		Type:    0,
-	}
-	for i, id := range membersId {
-		user, err := GetUser(id)
-		if err != nil {
-			return group, err
-		}
-		//初始化群名
-		if i < 3 {
-			name += user.UserName
-			if i < 2 {
-				name += "、"
-			}
-		}
-		group.Members = append(group.Members, *user)
-	}
-	groupMux.Lock()
-	defer groupMux.UnLock()
-	err := dao.DB.Create(&group).Error
-	return group, err
-}
-func DeleteGroup(groupId string) error {
-	groupMux.Lock()
-	defer groupMux.UnLock()
-	err := dao.DB.Table("user_groups").Where("group_basic_id=?", groupId).Delete(nil).Error
-	if err != nil {
+func DeleteGroup(gid string) error {
+	if err := deleteGroupFromDB(gid); err != nil {
 		return err
 	}
-	err = dao.DB.Model(&Model.GroupBasic{}).Delete("id=?", groupId).Error
-	if err != nil {
-		return err
-	}
-	return nil
+	err := deleteGroupFromRdb(gid)
+	return err
 }
+
 func RemoveGroupMember(groupId string, deletedId string) (*Model.GroupBasic, error) {
-	//log.Println(groupId, deletedId)
-
-	groupMux.Lock()
-	defer groupMux.UnLock()
-	group, err := GetGroupById(groupId)
+	group, err := GetGroup(groupId)
 	if err != nil {
 		return nil, err
 	}
@@ -88,76 +181,43 @@ func RemoveGroupMember(groupId string, deletedId string) (*Model.GroupBasic, err
 		Delete(nil).Error; err != nil {
 		return nil, err
 	}
-	return group, nil
+	//err = dao.DB.Model(&group).Update("Members", group.Members).Error
+	err = deleteGroupFromRdb(groupId)
+	return group, err
 }
 
-//	func AddToGroup(gid string, uid string) error {
-//		u := Model.UserBasic{ID: uid}
-//		g := Model.GroupBasic{}
-//		err := dao.DB.First(&g, "id=?", gid).Error
-//		if err != nil {
-//			return err
-//		}
-//
-//		g.Members = append(g.Members, u)
-//		groupMux.Lock()
-//		defer groupMux.UnLock()
-//		err = dao.DB.Model(g).Update("Members", g.Members).Error
-//		return err
-//	}
 func AddToGroup(groupId string, invitedMembers []string) (*Model.GroupBasic, error) {
-	groupMux.Lock()
-	defer groupMux.UnLock()
-	group, err := GetGroupById(groupId)
+	group, err := GetGroup(groupId)
 	if err != nil {
 		return nil, err
 	}
 	for _, id := range invitedMembers {
-		user, err := GetUser(id)
+		user, err := FindUser(id)
 		if err != nil {
 			return nil, err
 		}
 		group.Members = append(group.Members, *user)
 	}
 	err = dao.DB.Model(&group).Update("Members", group.Members).Error
+	if err != nil {
+		return nil, err
+	}
+	err = deleteGroupFromRdb(groupId)
 	return group, err
 }
-func GetGroupByName(name string) (*Model.GroupBasic, error) {
-	g := &Model.GroupBasic{}
-	err := dao.DB.Preload("Members").First(&g, "name = ?", name).Error
-	if err != nil {
-		return nil, err
-	}
-	return g, err
-}
 
-func GetGroupById(gid string) (*Model.GroupBasic, error) {
-	g := &Model.GroupBasic{}
-	err := dao.DB.Preload("Members").First(&g, gid).Error
-	if err != nil {
-		return nil, err
-	}
-	return g, err
-}
-func getGroupOwner(gid string) (string, error) {
-	g := Model.GroupBasic{}
-	err := dao.DB.Select("id", "owner_id").First(&g, "id", gid).Error
-	if err != nil {
-		return "", err
-	}
-	return g.OwnerId, nil
-}
 func EnterGroupReq(gid string, uid string) error {
 	t := time.Now()
-	user, err := GetUser(uid)
+	user, err := FindUser(uid)
 	if err != nil {
 		return err
 	}
-	//marshal, err := json.Marshal(user)
-	//if err != nil {
-	//	return err
-	//}
 	owner, err := getGroupOwner(gid)
+	if err != nil {
+		return err
+	}
+	//将申请记录存入缓存
+	err = dao.Rdb.SAdd(context.Background(), groupReqPreFix+gid, uid).Err()
 	if err != nil {
 		return err
 	}
@@ -174,24 +234,32 @@ func EnterGroupReq(gid string, uid string) error {
 }
 
 func EnterGroupAgree(gid string, uid string) error {
-	var uList []string
-	uList = append(uList, uid)
-	_, err := AddToGroup(gid, uList)
+	//判断是否发过申请
+	exist, err := dao.Rdb.SIsMember(context.Background(), groupReqPreFix+gid, uid).Result()
 	if err != nil {
 		return err
 	}
-	user, err := GetUser(uid)
+	if !exist {
+		return errors.New("同意未请求申请")
+	}
+
+	owner, err := getGroupOwner(gid)
 	if err != nil {
 		return err
 	}
-	marshal, err := json.Marshal(user)
+	err = dao.Rdb.SRem(context.Background(), groupReqPreFix+gid, uid).Err()
+	if err != nil {
+		return err
+	}
+
+	_, err = AddToGroup(gid, []string{uid})
 	if err != nil {
 		return err
 	}
 	m := &Model.Message{
 		SenderId:   gid,
 		ReceiverId: uid,
-		Content:    marshal,
+		Content:    owner,
 		MsgType:    Model.MGroupAgree,
 	}
 	err = SendMsg(m)

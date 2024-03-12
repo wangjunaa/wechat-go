@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"wechat/docs"
+	"wechat/middleware"
 	"wechat/server"
 )
 
@@ -36,12 +37,12 @@ func Router() *gin.Engine {
 		user.POST("/login", server.Login)
 		user.GET("/exist", server.IsUserExist)
 
-		user.Use(server.MwCheckToken)
+		user.Use(middleware.MwCheckToken)
 		user.GET("/find", server.FindUser)
 		user.POST("/delete", server.DeleteUser)
 		user.POST("/update", server.UpdateUser)
 	}
-	r.Use(server.MwCheckToken)
+	r.Use(middleware.MwCheckToken)
 	message := r.Group("/message")
 	{
 		message.GET("/getPush", server.GetPushMessage)

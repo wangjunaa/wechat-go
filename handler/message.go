@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -13,8 +14,9 @@ import (
 )
 
 var (
-	clients = make(map[string]Model.ClientNode)
-	mux     sync.Mutex
+	clients   = make(map[string]Model.ClientNode)
+	mux       sync.Mutex
+	msgPrefix = "msg:"
 )
 
 var upgrade = websocket.Upgrader{
@@ -78,6 +80,7 @@ func addClient(id string, conn *websocket.Conn) *Model.ClientNode {
 	clients[id] = c
 	return &c
 }
+
 func closeClient(id string) {
 	mux.Lock()
 	defer mux.Unlock()
@@ -89,6 +92,7 @@ func closeClient(id string) {
 		delete(clients, id)
 	}
 }
+
 func getClient(id string) *Model.ClientNode {
 	mux.Lock()
 	defer mux.Unlock()
@@ -128,7 +132,7 @@ func receiveMsgFromClient(conn *websocket.Conn) {
 			}
 		//转发群聊消息
 		case Model.MGroup:
-			group, err := GetGroupById(msg.ReceiverId)
+			group, err := GetGroup(msg.ReceiverId)
 			if err != nil {
 				panic(err)
 			}
@@ -147,13 +151,14 @@ func receiveMsgFromClient(conn *websocket.Conn) {
 		}
 	}
 }
+
 func receiveMsgFromRdb(id string, m chan *Model.Message) {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Println("handler.handle_message.GetMsgFromRdb:", r)
 		}
 	}()
-	Messages, err := dao.Rdb.LRange(dao.BgCtx, dao.MsgPre+id, 0, -1).Result()
+	Messages, err := dao.Rdb.LRange(context.Background(), msgPrefix+id, 0, -1).Result()
 	if err != nil {
 		panic(err)
 	}
@@ -165,7 +170,7 @@ func receiveMsgFromRdb(id string, m chan *Model.Message) {
 			panic(err)
 		}
 		m <- msg
-		err = dao.Rdb.LPop(dao.BgCtx, dao.MsgPre+id).Err()
+		err = dao.Rdb.LPop(context.Background(), msgPrefix+id).Err()
 		if err != nil {
 			panic(err)
 		}
@@ -179,8 +184,8 @@ func sendMsgToRdb(m *Model.Message) error {
 
 		return err
 	}
-	log.Println("sendMsgToRdb:", bytes)
-	err = dao.Rdb.RPush(dao.BgCtx, dao.MsgPre+m.ReceiverId, bytes).Err()
+	//log.Println("sendMsgToRdb:", bytes)
+	err = dao.Rdb.RPush(context.Background(), msgPrefix+m.ReceiverId, bytes).Err()
 	return err
 }
 
