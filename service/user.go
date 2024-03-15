@@ -1,4 +1,4 @@
-package server
+package service
 
 import (
 	"github.com/gin-gonic/gin"
@@ -92,7 +92,7 @@ func UpdateUser(c *gin.Context) {
 func Login(c *gin.Context) {
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("server.User.Login:", r)
+			log.Println("service.User.Login:", r)
 		}
 	}()
 	id := c.DefaultPostForm("id", "")
@@ -129,7 +129,7 @@ func CreateUser(c *gin.Context) {
 		RespFailure(c, 400, err.Error())
 		return
 	}
-	//fmt.Println("server.CreateUser:", id, password)
+	//fmt.Println("service.CreateUser:", id, password)
 	RespSuccess(c, 200, "成功", t, 1)
 }
 

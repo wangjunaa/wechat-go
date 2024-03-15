@@ -41,25 +41,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -91,25 +91,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -134,25 +134,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -184,25 +184,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -238,25 +238,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -288,25 +288,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -345,25 +345,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -395,25 +395,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -445,25 +445,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -495,25 +495,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -556,25 +556,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -613,25 +613,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -656,25 +656,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -701,25 +701,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -758,25 +758,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -808,25 +808,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -851,25 +851,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -901,25 +901,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -951,25 +951,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -1003,25 +1003,25 @@ const docTemplate = `{
                     "200": {
                         "description": "成功",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "400": {
                         "description": "参数有误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "401": {
                         "description": "验证失败",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     },
                     "500": {
                         "description": "内部错误",
                         "schema": {
-                            "$ref": "#/definitions/server.RespJson"
+                            "$ref": "#/definitions/service.RespJson"
                         }
                     }
                 }
@@ -1135,7 +1135,7 @@ const docTemplate = `{
                 }
             }
         },
-        "server.RespJson": {
+        "service.RespJson": {
             "type": "object",
             "properties": {
                 "code": {
